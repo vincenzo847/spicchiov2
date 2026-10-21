@@ -66,6 +66,7 @@
             <button type="submit" disabled="{{ auth.busy }}" style="min-height:54px;font:inherit;font-size:18px;font-weight:800;color:#1d1f20;background:#ffc53d;border:2px solid #1d1f20;border-radius:16px;box-shadow:4px 4px 0 #1d1f20;cursor:pointer">{{ auth.loginL }}</button>
             <button type="button" onClick="{{ auth.goForgot }}" style="align-self:center;font:inherit;font-size:14px;font-weight:700;color:#1d1f20;background:transparent;border:0;text-decoration:underline;text-underline-offset:3px;min-height:44px;cursor:pointer">Password dimenticata?</button>
           </form>
+          <button type="button" onClick="{{ auth.goSignup }}" style="min-height:50px;font:inherit;font-size:16px;font-weight:800;color:#1d1f20;background:#fff;border:2px solid #1d1f20;border-radius:14px;cursor:pointer">Nuova pizzeria? Crea un account</button>
           <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#544c45"><span style="flex:1;height:1.5px;background:#d9ccb8"></span>oppure<span style="flex:1;height:1.5px;background:#d9ccb8"></span></div>
           <button onClick="{{ auth.startDemo }}" style="min-height:50px;font:inherit;font-size:16px;font-weight:700;color:#1d1f20;background:#fff;border:2px solid #1d1f20;border-radius:14px;cursor:pointer">Prova con dati di esempio</button><button type="button" onClick="{{ openPrivacy }}" style="align-self:center;font:inherit;font-size:13px;font-weight:600;min-height:40px;padding:0 10px;border:0;background:transparent;color:#544c45;text-decoration:underline;cursor:pointer">Privacy e uso dei dati</button>
         </sc-if>
@@ -83,6 +84,19 @@
             <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700">Ripeti la password<input type="password" autocomplete="new-password" value="{{ auth.pass2 }}" onChange="{{ auth.setPass2 }}" style="font:inherit;font-size:16px;font-weight:400;min-height:48px;padding:0 14px;border:2px solid #1d1f20;border-radius:12px;background:#fff;color:#1d1f20"></label>
             <span role="alert" style="font-size:14px;font-weight:700;color:#a3251b;min-height:20px;text-align:center">{{ auth.msg }}</span>
             <button type="submit" disabled="{{ auth.busy }}" style="min-height:54px;font:inherit;font-size:18px;font-weight:800;color:#1d1f20;background:#ffc53d;border:2px solid #1d1f20;border-radius:16px;box-shadow:4px 4px 0 #1d1f20;cursor:pointer">Salva e entra</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ auth.isSignup }}" hint-placeholder-val="{{ false }}">
+          <form onSubmit="{{ auth.submitSignup }}" style="display:flex;flex-direction:column;gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700">Nome della pizzeria<input type="text" autocomplete="organization" maxlength="80" value="{{ auth.nome }}" onChange="{{ auth.setNome }}" style="font:inherit;font-size:16px;font-weight:400;min-height:48px;padding:0 14px;border:2px solid #1d1f20;border-radius:12px;background:#fff;color:#1d1f20"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700">Email del titolare<input type="email" autocomplete="username" value="{{ auth.email }}" onChange="{{ auth.setEmail }}" style="font:inherit;font-size:16px;font-weight:400;min-height:48px;padding:0 14px;border:2px solid #1d1f20;border-radius:12px;background:#fff;color:#1d1f20"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700">Password<input type="password" autocomplete="new-password" value="{{ auth.pass }}" onChange="{{ auth.setPass }}" style="font:inherit;font-size:16px;font-weight:400;min-height:48px;padding:0 14px;border:2px solid #1d1f20;border-radius:12px;background:#fff;color:#1d1f20"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700">Ripeti la password<input type="password" autocomplete="new-password" value="{{ auth.pass2 }}" onChange="{{ auth.setPass2 }}" style="font:inherit;font-size:16px;font-weight:400;min-height:48px;padding:0 14px;border:2px solid #1d1f20;border-radius:12px;background:#fff;color:#1d1f20"></label>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.4;cursor:pointer"><input type="checkbox" checked="{{ auth.priv }}" onChange="{{ auth.setPriv }}" style="flex:none;width:20px;height:20px;margin-top:1px;accent-color:#1d1f20"><span>Ho letto l’informativa privacy e accetto che i dati della pizzeria siano trattati come descritto.</span></label>
+            <button type="button" onClick="{{ openPrivacy }}" style="align-self:flex-start;font:inherit;font-size:13px;font-weight:600;min-height:36px;padding:0;border:0;background:transparent;color:#544c45;text-decoration:underline;cursor:pointer">Leggi l’informativa privacy</button>
+            <span role="alert" style="font-size:14px;font-weight:700;color:#a3251b;min-height:20px;text-align:center;text-wrap:pretty">{{ auth.msg }}</span>
+            <button type="submit" disabled="{{ auth.busy }}" style="min-height:54px;font:inherit;font-size:18px;font-weight:800;color:#1d1f20;background:#ffc53d;border:2px solid #1d1f20;border-radius:16px;box-shadow:4px 4px 0 #1d1f20;cursor:pointer">{{ auth.signupL }}</button>
+            <button type="button" onClick="{{ auth.goLogin }}" style="align-self:center;font:inherit;font-size:14px;font-weight:700;color:#1d1f20;background:transparent;border:0;text-decoration:underline;text-underline-offset:3px;min-height:44px;cursor:pointer">Hai già un account? Accedi</button>
           </form>
         </sc-if>
         <sc-if value="{{ auth.isNoMember }}" hint-placeholder-val="{{ false }}">
@@ -1728,9 +1742,12 @@ class Component extends DCLogic {
     // link dalle email di Supabase: recupero password o invito (al primo accesso si sceglie la password)
     const recTok = hp && ['recovery', 'invite'].includes(hp.get('type')) && hp.get('access_token') ? { invite: hp.get('type') === 'invite', access_token: hp.get('access_token'), refresh_token: hp.get('refresh_token'), expires_in: +hp.get('expires_in') || 3600 } : null;
     const linkErr = hp && hp.get('error_description');
+    // link di conferma dell'email dopo la registrazione: si accede con email e password
+    const signOk = !linkErr && hp && hp.get('type') === 'signup' && !!hp.get('access_token');
+    if (signOk) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
     return {
-      phase: recTok || linkErr || !session ? 'login' : 'loading', ready: false, demo: false, recTok,
-      auth: recTok ? { view: 'reset' } : linkErr ? { view: 'forgot', notice: 'Il link non è più valido: richiedine uno nuovo.' } : { view: 'login', email: session ? session.email : '' },
+      phase: recTok || linkErr || signOk || !session ? 'login' : 'loading', ready: false, demo: false, recTok,
+      auth: recTok ? { view: 'reset' } : linkErr ? { view: 'forgot', notice: 'Il link non è più valido: richiedine uno nuovo.' } : signOk ? { view: 'login', notice: 'Email confermata: ora accedi con email e password.' } : { view: 'login', email: session ? session.email : '' },
       screen: null, q: '', toast: null,
       ingView: null, selPizza: null, addIng: '', supFilter: null, period: 'w', margSort: 'tot', ddt: null, cloud, session: recTok ? null : session, archView: null, archQ: '', archType: 'all', archPeriod: 'm', pendingN: 0
     };
@@ -1959,6 +1976,11 @@ class Component extends DCLogic {
       if (!rm.ok) throw 0;
       mem = await rm.json();
     } catch (e) { return this.offlineStart(); }
+    if (!mem.length) {
+      const nuova = await this.creaPizzeria(c);
+      if (nuova === 'expire') return this.expire();
+      if (nuova) mem = nuova;
+    }
     if (!mem.length) { this.setState({ phase: 'login', auth: { view: 'nomember', email: this._sess.email } }); return; }
     // pizzeria scelta l'ultima volta su questo dispositivo, altrimenti quella dove si è titolari
     const pref = Component.lsGet('artigiani-rid-' + Component.uidOf(this._sess));
@@ -1977,6 +1999,17 @@ class Component extends DCLogic {
     this.saveCache();
     this.pushData();
     this.flushDocs();
+  }
+  // account registrato dall'app e non ancora in una pizzeria: crea la sua (supabase-registrazione.sql).
+  // Restituisce i nuovi membri, null se non c'è niente da creare, 'expire' se la sessione è scaduta.
+  async creaPizzeria(c) {
+    try {
+      const r = await fetch(c.url + '/rest/v1/rpc/crea_mia_pizzeria', { method: 'POST', headers: Component.H(c, { 'Content-Type': 'application/json' }), body: '{}' });
+      if (r.status === 401) return 'expire';
+      if (!r.ok) return null;
+      const rm = await fetch(c.url + '/rest/v1/membri?select=ristorante_id,ruolo,ristoranti(nome,logo_url)', { headers: Component.H(c) });
+      return rm.ok ? await rm.json() : null;
+    } catch (e) { return null; }
   }
   expire() {
     const w = this.state.wf;
@@ -2212,7 +2245,7 @@ class Component extends DCLogic {
   authVals() {
     const S = this.state, A = S.auth || {}, view = A.view || 'login', conf = this.cloudConf();
     const setA = p => this.setState(s => ({ auth: { ...(s.auth || {}), ...p } }));
-    const T = { login: ['Accedi', 'Entra con email e password per vedere i dati della pizzeria.'], forgot: ['Password dimenticata', 'Scrivi la tua email: ti mandiamo un link per sceglierne una nuova.'], reset: S.recTok && S.recTok.invite ? ['Benvenuto', 'Scegli la password con cui entrerai in Spicchio.'] : ['Nuova password', 'Scegli la nuova password del tuo account.'], nomember: ['Account non collegato', 'Il tuo account non è ancora collegato a una pizzeria. Contatta l’assistenza.'] }[view] || ['Accedi', ''];
+    const T = { login: ['Accedi', 'Entra con email e password per vedere i dati della pizzeria.'], forgot: ['Password dimenticata', 'Scrivi la tua email: ti mandiamo un link per sceglierne una nuova.'], reset: S.recTok && S.recTok.invite ? ['Benvenuto', 'Scegli la password con cui entrerai in Spicchio.'] : ['Nuova password', 'Scegli la nuova password del tuo account.'], signup: ['Crea un account', 'Registra la tua pizzeria: ti mandiamo un’email per confermare l’indirizzo, poi entri subito.'], nomember: ['Account non collegato', 'Il tuo account non è ancora collegato a una pizzeria. Contatta l’assistenza.'] }[view] || ['Accedi', ''];
     const noConf = () => { setA({ busy: false, ok: false, msg: S.cfgPending ? 'Collegamento in corso, riprova tra un attimo.' : 'Servizio non raggiungibile: riprova tra poco' }); if (!S.cfgPending) this.loadServerCfg(); };
     return {
       ...this.privacyVals(), authOn: S.phase !== 'loading', loadingOn: S.phase === 'loading', appOn: false,
@@ -2220,11 +2253,14 @@ class Component extends DCLogic {
       shell: { padL: '0px', padB: '0px', padT: '0px', topOff: '0px' },
       auth: {
         title: T[0], say: T[1], notice: A.notice || (S.cfgErr ? 'Servizio non raggiungibile: riprova tra poco' : ''), hasNotice: !!(A.notice || S.cfgErr),
-        isLogin: view === 'login', isForgot: view === 'forgot', isReset: view === 'reset', isNoMember: view === 'nomember', doLogout: () => this.logout(),
+        isLogin: view === 'login', isForgot: view === 'forgot', isReset: view === 'reset', isNoMember: view === 'nomember', isSignup: view === 'signup', doLogout: () => this.logout(),
         email: A.email || '', pass: A.pass || '', pass2: A.pass2 || '', msg: A.msg || '', msgColor: A.ok ? '#1f8a4c' : '#a3251b', busy: !!A.busy, loginL: A.busy ? 'Accesso in corso…' : 'Entra',
         setEmail: e => setA({ email: e.target.value, msg: '' }), setPass: e => setA({ pass: e.target.value, msg: '' }), setPass2: e => setA({ pass2: e.target.value, msg: '' }),
         goForgot: () => setA({ view: 'forgot', msg: '', notice: '', ok: false }), goLogin: () => setA({ view: 'login', msg: '', ok: false }),
         startDemo: () => this.startDemo(),
+        nome: A.nome || '', priv: !!A.priv, signupL: A.busy ? 'Creazione in corso…' : 'Crea l’account',
+        setNome: e => setA({ nome: e.target.value, msg: '' }), setPriv: e => setA({ priv: e.target.checked, msg: '' }),
+        goSignup: () => setA({ view: 'signup', msg: '', notice: '', ok: false, pass: '', pass2: '' }),
         submitLogin: async e => {
           e.preventDefault();
           const a = this.state.auth || {}, cc = this.cloudConf();
@@ -2246,6 +2282,30 @@ class Component extends DCLogic {
           if (r.status === 429) return setA({ busy: false, ok: false, msg: 'Troppi tentativi: riprova tra qualche minuto' });
           if (!r.ok) return setA({ busy: false, ok: false, msg: 'Invio non riuscito: riprova' });
           setA({ busy: false, ok: true, msg: 'Se l’email è registrata ti abbiamo mandato un link: aprilo e scegli la nuova password.' });
+        },
+        submitSignup: async e => {
+          e.preventDefault();
+          const a = this.state.auth || {}, cc = this.cloudConf(), email = (a.email || '').trim().toLowerCase(), nome = (a.nome || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+          if (!cc) return noConf();
+          if (nome.length < 2) return setA({ msg: 'Scrivi il nome della pizzeria.' });
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setA({ msg: 'Scrivi un’email valida.' });
+          if ((a.pass || '').length < 10) return setA({ msg: 'La password deve avere almeno 10 caratteri' });
+          if (a.pass !== a.pass2) return setA({ msg: 'Le due password non coincidono' });
+          if (!a.priv) return setA({ msg: 'Per continuare conferma di aver letto l’informativa privacy.' });
+          setA({ busy: true, msg: '' });
+          let r, j;
+          // il nome della pizzeria resta nei dati dell'account: la pizzeria nasce al primo accesso, dopo la conferma dell'email
+          try { r = await fetch(cc.url + '/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', headers: { apikey: cc.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: a.pass, data: { pizzeria: nome } }) }); j = await r.json().catch(() => ({})); }
+          catch (x) { return setA({ busy: false, msg: 'Nessuna connessione: riprova' }); }
+          const code = String(j.error_code || j.code || '');
+          if (r.status === 429) return setA({ busy: false, msg: 'Troppi tentativi: riprova tra qualche minuto' });
+          if (code === 'signup_disabled') return setA({ busy: false, msg: 'Le registrazioni non sono aperte: contatta l’assistenza.' });
+          if (code === 'weak_password') return setA({ busy: false, msg: 'Password troppo debole: usa lettere maiuscole, minuscole, numeri e un simbolo.' });
+          if (code === 'user_already_exists' || code === 'email_exists') return setA({ busy: false, msg: 'Questa email ha già un account: accedi o usa “Password dimenticata?”.' });
+          if (!r.ok) return setA({ busy: false, msg: 'Registrazione non riuscita: riprova' });
+          // conferma dell'email disattivata in Supabase: la sessione arriva subito
+          if (j.access_token) { this.setSession(Component.sess(j, email)); this.setState({ auth: { view: 'login', email }, phase: 'loading' }); return this.loadAccount(); }
+          setA({ busy: false, view: 'login', email, pass: '', pass2: '', nome: '', priv: false, msg: '', notice: 'Ti abbiamo mandato un’email a ' + email + ': apri il link per confermare l’indirizzo, poi accedi qui.' });
         },
         submitReset: async e => {
           e.preventDefault();
