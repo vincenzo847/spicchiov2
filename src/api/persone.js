@@ -66,13 +66,23 @@ export default async function persone(request, env) {
         const id = await r.json();
         return UUID.test(String(id || '')) ? id : null;
       };
-      let uid = await find(), nuovo = false;
+      let uid = await find(), nuovo = false, usato = false;
       if (uid) {
         const ms = await membersOf(uid);
         if (ms.some(m => m.ristorante_id === rid)) return fail(409, 'Questa persona fa già parte della pizzeria');
         // account rimasto senza pizzeria (creato a mano, da un invito o da prove precedenti): riceve la password provvisoria,
         // altrimenti entrerebbe con una password che nessuno conosce. Chi lavora in altre pizzerie tiene la sua.
-        if (!ms.length && pwOk) {
+        // Con la registrazione aperta, un account senza pizzeria può essere di un titolare che si è appena iscritto:
+        // la password si cambia solo agli account mai usati e non registrati dall'app, così nessuno prende l'account di un altro.
+        if (!ms.length) {
+          const g = await adm('/auth/v1/admin/users/' + uid);
+          if (!g.ok) return fail(502, 'Controllo dell’account non riuscito');
+          const acc = await g.json(), meta = acc.user_metadata || {};
+          if (meta.pizzeria || meta.pizzeria_creata) return fail(409, 'Questa email è registrata come titolare di un’altra pizzeria: usa un’altra email');
+          // account già usato: entra con la password che conosce già
+          usato = !!acc.last_sign_in_at;
+        }
+        if (!ms.length && pwOk && !usato) {
           const p = await adm('/auth/v1/admin/users/' + uid, { method: 'PUT', body: JSON.stringify({ password, email_confirm: true }) });
           if (!p.ok) { const err = await p.json().catch(() => ({})); console.error('password account esistente', p.status, JSON.stringify(err)); return fail(502, authMsg(p.status, err)); }
           nuovo = true;

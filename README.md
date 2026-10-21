@@ -27,6 +27,7 @@ L'app gira su Cloudflare Workers (vedi `LEGGIMI-CLOUDFLARE.md`). Viene pubblicat
   - `supabase/supabase-vendite.sql`: vendite importate dalla cassa (Impostazioni › Vendite dalla cassa).
   - `supabase/supabase-pizzeria.sql`: logo della pizzeria (spazio file pubblico `loghi`) e cambio di nome e logo da parte del titolare.
   - `supabase/supabase-nuova-pizzeria.sql`: crea una pizzeria, con il suo logo, e collega il titolare.
+  - `supabase/supabase-registrazione.sql`: la pizzeria di chi si registra dall'app nasce al primo accesso.
   - `supabase/supabase-dipendenti.sql`: aggiunge o rimuove un dipendente, indicando la pizzeria con il suo id.
 - `sorgente/support.js`, `sorgente/_ds/`, `sorgente/image-slot.js`: necessari per aprire `App.dc.html` nell'editor.
 - `sorgente/icons/`, `sorgente/manifest.webmanifest`: copie usate dall'editor.
@@ -37,8 +38,8 @@ Dove i dati restano: tutto sta su Supabase. Sul dispositivo restano la sessione 
 
 ## Installazione da zero
 1. **Supabase**: crea un progetto.
-   - In Authentication › Sign In / Providers disattiva **Allow new users to sign up**: gli account li crei solo tu.
-   - In Authentication › URL Configuration imposta come Site URL e Redirect URL l'indirizzo dell'app (serve per "Password dimenticata?").
+   - In Authentication › Sign In / Providers lascia attivi **Allow new users to sign up** e **Confirm email**: i titolari si registrano dall'app (vedi "Registrazione dall'app"). Se preferisci creare tu tutti gli account, disattiva "Allow new users to sign up".
+   - In Authentication › URL Configuration imposta come Site URL e Redirect URL l'indirizzo dell'app (serve per "Password dimenticata?" e per il link di conferma della registrazione).
 2. Crea il tuo utente in Authentication › Users › Add user, spuntando "Auto Confirm User".
 3. In SQL Editor esegui in questo ordine:
    1. `supabase/supabase-sicurezza.sql`, dopo aver scritto la tua email alla riga `v_email` e il nome della prima pizzeria alla riga `v_nome`;
@@ -49,11 +50,21 @@ Dove i dati restano: tutto sta su Supabase. Sul dispositivo restano la sessione 
    6. `supabase/supabase-persone.sql`;
    7. `supabase/supabase-promemoria.sql`;
    8. `supabase/supabase-pizzeria.sql`;
-   9. `supabase/supabase-nuova-pizzeria.sql`, una volta per ogni altra pizzeria.
+   9. `supabase/supabase-registrazione.sql`;
+   10. `supabase/supabase-nuova-pizzeria.sql`, solo per le pizzerie che crei tu a mano.
 
 4. **Cloudflare**: collega questo repository a Cloudflare Workers e imposta le variabili indicate in `LEGGIMI-CLOUDFLARE.md`.
 
-## Nuovo cliente
+## Registrazione dall'app
+Nella pagina di accesso c'è **Nuova pizzeria? Crea un account**. Il titolare scrive nome della pizzeria, email e password e accetta l'informativa privacy. Supabase gli manda un'email di conferma; il link riapre l'app, che chiede di accedere. Al primo accesso l'app chiama `crea_mia_pizzeria()` (`supabase/supabase-registrazione.sql`): nasce la pizzeria, con le causali scarto predefinite, e l'account ne diventa titolare. Da lì parte la guida "Prepara la tua pizzeria".
+
+- Un account crea una sola pizzeria. Se il nome esiste già, alla nuova si aggiunge un numero, per esempio "Da Peppe (2)".
+- Senza conferma dell'email la pizzeria non nasce.
+- Le pizzerie nate così hanno `origine = 'registrazione'` nella tabella `ristoranti`. L'ultima query dello script le elenca con il titolare.
+- In **Impostazioni › Persone** un titolare non può aggiungere come dipendente l'email di chi si è registrato come titolare. A un account già usato non cambia la password: la persona entra con la sua.
+- Per le email di conferma, oltre poche al giorno, Supabase chiede un servizio di invio tuo (Authentication › Emails › SMTP Settings). Il testo dell'email si cambia in Authentication › Emails › Templates › Confirm signup.
+
+## Nuovo cliente creato a mano
 1. Authentication › Users › Add user: email del titolare, password provvisoria (almeno 10 caratteri), "Auto Confirm User".
 2. Logo (facoltativo): Storage › loghi › Upload file, poi sul file Get URL e copia il link.
 3. In `supabase/supabase-nuova-pizzeria.sql` compila `v_nome_pizzeria`, `v_email_titolare` e, se c'è, `v_logo_url`, ed esegui.
