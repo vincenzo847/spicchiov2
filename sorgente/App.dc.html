@@ -1954,6 +1954,8 @@ class Component extends DCLogic {
     let r, j;
     try { r = await fetch(cc.url + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: cc.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass }) }); j = await r.json().catch(() => ({})); }
     catch (e) { return 'Nessuna connessione: riprova'; }
+    // account registrato dall'app ma con l'email non ancora confermata
+    if (!r.ok && String(j.error_code || j.code || '') === 'email_not_confirmed') return 'Email non ancora confermata: apri il link che ti abbiamo mandato, poi accedi.';
     if (!r.ok) return r.status === 400 || r.status === 401 ? 'Email o password non corrette' : r.status === 429 ? 'Troppi tentativi: riprova tra qualche minuto' : 'Accesso non riuscito: riprova';
     this.setSession(Component.sess(j, email));
     this.setState({ auth: { view: 'login', email }, phase: 'loading' });
