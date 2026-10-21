@@ -1,0 +1,15 @@
+{
+  "name": "spicchio",
+  "private": true,
+  "type": "module",
+  "description": "Spicchio su Cloudflare Workers: l'app è public/index.html (senza passaggi di build), le funzioni sono in src/",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "http_ece": "^1.2.0",
+    "wrangler": "4.42.0"
+  }
+}

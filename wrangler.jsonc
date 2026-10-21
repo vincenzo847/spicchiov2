@@ -1,0 +1,20 @@
+// Configurazione del Worker di Spicchio su Cloudflare.
+// Le variabili d'ambiente e le chiavi segrete NON vanno qui: si impostano nella dashboard di Cloudflare
+// (Workers & Pages › spicchio › Settings › Variables and Secrets). Vedi LEGGIMI-CLOUDFLARE.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "spicchio",
+  "main": "src/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  // promemoria serale: alle 20 e alle 21 UTC; la funzione invia solo nel giro che cade alle 22 o alle 23 in Italia
+  "triggers": { "crons": ["0 20 * * *", "0 21 * * *"] },
+  "observability": { "enabled": true },
+  // le variabili scritte nella dashboard restano anche dopo ogni pubblicazione
+  "keep_vars": true
+}
