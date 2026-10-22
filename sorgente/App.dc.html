@@ -316,7 +316,12 @@
     <sc-if value="{{ isScarti }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:20px;color:#1d1f20">
         <sc-if value="{{ diagScartiOn }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ diagAsk }}" as="q" hint-placeholder-count="1"><div role="region" aria-label="Domanda della sera" style="border:2.5px solid #1a1a1a;border-radius:20px;background:#ffc53d;box-shadow:5px 5px 0 #1a1a1a;padding:16px 18px;display:flex;flex-direction:column;gap:12px;color:#1a1a1a"><span style="font-size:13px;font-weight:700">Diagnosi · sera {{ q.nL }}</span><span style="font-size:21px;font-weight:800;line-height:1.2;text-wrap:balance">{{ q.q }}</span><div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ q.opts }}" as="o"><button onClick="{{ o.pick }}" style="font:inherit;font-size:19px;font-weight:800;min-width:58px;min-height:54px;padding:0 14px;border:2.5px solid #1a1a1a;border-radius:14px;background:#fff;color:#1a1a1a;cursor:pointer">{{ o.l }}</button></sc-for></div><span style="font-size:13px;line-height:1.4;text-wrap:pretty">Una vaschetta = {{ q.trayL }}. Se stasera non lo sai, lascia stare: la sera resta vuota e non conta.</span></div></sc-for></sc-if>
-        <sc-if value="{{ msv.on }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ msv.on }}" hint-placeholder-val="{{ true }}">
+          <div role="tablist" aria-label="Scarti" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border:2.5px solid #1d1f20;border-radius:18px;background:#fff">
+            <sc-for list="{{ msv.tabs }}" as="t" hint-placeholder-count="2"><button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.pick }}" style="font:inherit;font-size:16px;font-weight:800;min-height:52px;padding:6px 10px;border:0;border-radius:14px;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;line-height:1.15">{{ t.l }}<sc-if value="{{ t.hasN }}" hint-placeholder-val="{{ false }}"><span aria-label="ingredienti che non tornano" style="flex:none;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:#d4352a;color:#fff;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center">{{ t.n }}</span></sc-if></button></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ msv.cardOn }}" hint-placeholder-val="{{ false }}">
           <div style="border:2.5px solid #1a1a1a;border-radius:20px;background:#fff;box-shadow:5px 5px 0 #1a1a1a;padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0">
             <div style="display:flex;flex-direction:column;gap:2px"><h2 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.15">Merce sparita · ultimi 28 giorni</h2><span style="font-size:14px;color:#544c45;text-wrap:pretty">{{ msv.sub }}</span></div>
             <sc-if value="{{ msv.noSales }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;background:#fff3cf;border:2px solid #1d1f20;border-radius:14px;padding:12px 14px"><span style="font-size:15px;font-weight:700;text-wrap:pretty">Importa le vendite della cassa degli ultimi 28 giorni per vedere la merce sparita.</span><button onClick="{{ msv.openSales }}" style="font:inherit;font-size:14px;font-weight:700;min-height:44px;padding:0 16px;border:2px solid #1d1f20;border-radius:99px;background:#fff;color:#1d1f20;cursor:pointer;white-space:nowrap;background:#ffc53d">Impostazioni › Vendite dalla cassa</button></div></sc-if>
@@ -347,11 +352,12 @@
             <span style="font-size:13px;line-height:1.45;color:#544c45;text-wrap:pretty">Non spiegato = acquistato − consumo da ricetta − scarti registrati. Il periodo finisce il giorno prima dell’ultima consegna, quando il frigo è quasi vuoto; l’incertezza (metà di una consegna media) copre quello che c’era in frigo. Contare il frigo la toglie.</span>
           </div>
         </sc-if>
-        <sc-if value="{{ wv.isPhone }}" hint-placeholder-val="{{ false }}"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Registra un imprevisto</h2></sc-if>
+        <sc-if value="{{ msv.regOn }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ msv.phoneH2On }}" hint-placeholder-val="{{ false }}"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Registra un imprevisto</h2></sc-if>
         <sc-if value="{{ wv.hasTrend }}" hint-placeholder-val="{{ false }}"><div role="status" style="border:2px solid #1d1f20;border-radius:14px;background:{{ wv.trendBgC }};color:#1d1f20;padding:12px 14px;font-size:15px;font-weight:700;text-wrap:pretty">{{ wv.trendL }}</div></sc-if>
         <sc-if value="{{ wv.showKpis }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1 style="margin:0;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05">Registra un imprevisto</h1><sc-if value="{{ pendingOn }}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size:14px;font-weight:700;background:#ffc53d;border:2px solid #1d1f20;border-radius:99px;padding:3px 12px;white-space:nowrap">{{ pendingL }}</span></sc-if></div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><sc-if value="{{ msv.h1On }}" hint-placeholder-val="{{ false }}"><h1 style="margin:0;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05">Registra un imprevisto</h1></sc-if><sc-if value="{{ pendingOn }}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size:14px;font-weight:700;background:#ffc53d;border:2px solid #1d1f20;border-radius:99px;padding:3px 12px;white-space:nowrap">{{ pendingL }}</span></sc-if></div>
             <sc-if value="{{ notStaff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ wv.openReasons }}" style="font:inherit;font-size:14px;font-weight:700;color:#1d1f20;background:transparent;border:0;text-decoration:underline;text-underline-offset:3px;min-height:44px;cursor:pointer">Impostazioni › Scarti</button></sc-if>
           </div>
           <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
@@ -496,6 +502,7 @@
             <sc-if value="{{ wv.isPhone }}" hint-placeholder-val="{{ false }}"><sc-if value="{{ notStaff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ wv.openReasons }}" style="align-self:flex-start;font:inherit;font-size:14px;font-weight:700;color:#1d1f20;background:transparent;border:0;text-decoration:underline;text-underline-offset:3px;min-height:44px;cursor:pointer">Impostazioni › Scarti</button></sc-if></sc-if>
           </div>
         </div>
+        </sc-if>
       </div>
     </sc-if>
 
@@ -4270,7 +4277,7 @@ class Component extends DCLogic {
       const risposte = Component.daysBetween(st, end).filter(d => isOpenD(d) || byDay[d] != null).map(d => byDay[d] ?? null), D = Component.diagnosi(risposte, i.trayKg, openN);
       return { ...D, st, end, done: D.n >= 5 || T0m > end, today: byDay[T0m] };
     };
-    const goMerce = id => e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'scarti', mOpen: id }, () => setTimeout(() => { const el = document.getElementById('merce-' + id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 80)); };
+    const goMerce = id => e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'scarti', mOpen: id, scTab: 'merce' }, () => setTimeout(() => { const el = document.getElementById('merce-' + id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 80)); };
     const updIng = (id, f) => this.setState(s => ({ ingredients: s.ingredients.map(x => x.id === id ? f(x) : x) }));
     // domanda della sera: dalle 21:30 di ogni giorno di apertura, anche per lo staff (in demo subito, per provarla)
     const nowD = new Date(), hmD = nowD.getHours() * 60 + nowD.getMinutes(), eveOk = S.demo || hmD >= 21 * 60 + 30 || nowD.getHours() < Component._dayEnd;
@@ -4792,7 +4799,7 @@ class Component extends DCLogic {
       targetPlus: () => { const v = Math.min(45, target + 1); this.setState({ targetFc: v }); },
       addMenu: !!S.addMenu, toggleAddMenu: () => this.setState(s => ({ addMenu: !s.addMenu })), closeAddMenu: () => this.setState({ addMenu: false }),
       pickDdtMenu: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.setState({ addMenu: false }); if (f) this.readDdt(f); },
-      navGo: Object.fromEntries(tabs.map(t => [t, go(t)])),
+      navGo: Object.fromEntries(tabs.map(t => [t, go(t, t === 'scarti' ? { scTab: 'reg' } : null)])),
       navC: Object.fromEntries(tabs.map(t => [t, t === tabOf ? 'var(--color-bg)' : 'var(--color-accent-300)'])),
       navB: Object.fromEntries(tabs.map(t => [t, t === tabOf ? '#1a1a1a' : 'transparent'])),
       isFornTab: screen === 'arch' || screen === 'forn' || screen === 'sups' || screen === 'ordini', ...supVals, ...ordVals,
@@ -4812,7 +4819,7 @@ class Component extends DCLogic {
       openDaysL: 'Aperto ' + openDays + (openDays === 1 ? ' giorno' : ' giorni') + ' a settimana' + (Array.isArray(S.closedDays) ? '' : ' (valore predefinito: scegli i giorni di chiusura)'),
       fixedRows: [['rent', 'Affitto', 'Locale e spese condominiali'], ['staff', 'Personale', 'Stipendi lordi, contributi, TFR'], ['energy', 'Energia', 'Luce, gas, legna per il forno']].map(([k, label, hint]) => ({ label, hint, value: S.fixed && S.fixed[k] != null ? S.fixed[k] : '', on: setFixed(k) })),
 
-      goScarti: go('scarti'), diagAsk, diagDashOn: screen === 'dash' && diagAsk.length > 0, diagScartiOn: diagAsk.length > 0,
+      goScarti: go('scarti', { scTab: 'reg' }), diagAsk, diagDashOn: screen === 'dash' && diagAsk.length > 0, diagScartiOn: diagAsk.length > 0,
       msv: (() => {
         const fresh = msAll.filter(m => m.stato !== 'noacq'), MSM = 4.33 * 7 / 28;
         const rows = merceOk.map(m => {
@@ -4852,7 +4859,10 @@ class Component extends DCLogic {
         const noSales = !rows.length && fresh.some(m => m.stato === 'novendite');
         // in vista solo gli allarmi (e la riga aperta da Da fare); i freschi che tornano si aprono a richiesta, così la pagina resta corta
         const okN = rows.filter(r => !r.alarm).length, showAll = !!S.mAll;
-        return { on: S.role !== 'staff' && fresh.length > 0, rows, shown: rows.filter(r => r.alarm || showAll || r.domId === 'merce-' + S.mOpen), hasOk: okN > 0, okL: showAll ? 'Nascondi i freschi che tornano' : (rows.length === okN ? 'Tutti i ' + okN + ' freschi tornano: mostrali' : 'Mostra gli altri ' + okN + ' freschi: tornano tutti'), toggleAll: () => this.setState({ mAll: !showAll }), hasRows: rows.length > 0, noSales, someMissing: rows.length > 0 && fresh.some(m => m.stato === 'novendite'),
+        // due schede (solo per il titolare, quando ci sono freschi da controllare): si parte sempre da "Registra un imprevisto"
+        const tabsOn = S.role !== 'staff' && fresh.length > 0, tab = tabsOn && S.scTab === 'merce' ? 'merce' : 'reg', nAl = merceAlarm.length;
+        const tabBtn = (k, l, n) => ({ l, n: n ? String(n) : '', hasN: !!n, sel: tab === k ? 'true' : 'false', bg: tab === k ? '#1d1f20' : '#fff', fg: tab === k ? '#fff6ea' : '#1d1f20', pick: () => { this.setState({ scTab: k }); window.scrollTo(0, 0); } });
+        return { on: tabsOn, cardOn: tabsOn && tab === 'merce', regOn: tab === 'reg', tabs: [tabBtn('reg', 'Registra un imprevisto', 0), tabBtn('merce', 'Merce sparita', nAl)], h1On: !tabsOn, phoneH2On: !tabsOn && (S.vw || 1280) < 768, nAlL: nAl === 1 ? '1 ingrediente non torna' : nAl + ' ingredienti non tornano', rows, shown: rows.filter(r => r.alarm || showAll || r.domId === 'merce-' + S.mOpen), hasOk: okN > 0, okL: showAll ? 'Nascondi i freschi che tornano' : (rows.length === okN ? 'Tutti i ' + okN + ' freschi tornano: mostrali' : 'Mostra gli altri ' + okN + ' freschi: tornano tutti'), toggleAll: () => this.setState({ mAll: !showAll }), hasRows: rows.length > 0, noSales, someMissing: rows.length > 0 && fresh.some(m => m.stato === 'novendite'),
           openSales: () => this.setState({ salesDlg: { step: 'pick', msg: '' } }),
           sub: merceAlarm.length ? (merceAlarm.length === 1 ? '1 ingrediente non torna' : merceAlarm.length + ' ingredienti non tornano') + ': tocca la riga per contare il frigo o avviare la diagnosi.' : 'Acquistato meno consumo da ricetta e scarti registrati: per ora tutto torna.' };
       })(),
