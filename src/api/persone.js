@@ -1,6 +1,6 @@
 // /api/persone: il titolare aggiunge, toglie o cambia la password ai dipendenti della sua pizzeria.
 // Variabili d'ambiente: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY.
-// È l'unico punto che usa la chiave service_role: prima di ogni azione controlla
+// Con /api/candidatura e il promemoria, è uno dei punti che usano la chiave service_role: prima di ogni azione controlla
 // che chi chiede sia collegato e sia il titolare della pizzeria indicata.
 import { json, fail, readJson } from '../util.js';
 

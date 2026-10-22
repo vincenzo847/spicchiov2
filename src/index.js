@@ -5,10 +5,11 @@
 import config from './api/config.js';
 import claude from './api/claude.js';
 import persone from './api/persone.js';
+import candidatura from './api/candidatura.js';
 import promemoriaHttp, { promemoria } from './api/promemoria.js';
 import { fail } from './util.js';
 
-const API = { '/api/config': config, '/api/claude': claude, '/api/persone': persone, '/api/promemoria': promemoriaHttp };
+const API = { '/api/config': config, '/api/claude': claude, '/api/persone': persone, '/api/candidatura': candidatura, '/api/promemoria': promemoriaHttp };
 
 function sicurezza(env) {
   let sb = '';

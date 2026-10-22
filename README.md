@@ -55,7 +55,18 @@ Dove i dati restano: tutto sta su Supabase. Sul dispositivo restano la sessione 
 
 4. **Cloudflare**: collega questo repository a Cloudflare Workers e imposta le variabili indicate in `LEGGIMI-CLOUDFLARE.md`.
 
-## Registrazione dall'app
+## Prova con i beta tester (ora)
+Durante la prova la registrazione libera è chiusa: `static REGISTRAZIONE_APERTA = false` in `sorgente/App.dc.html`. Al posto di **Nuova pizzeria? Crea un account** il login mostra **Hai una pizzeria? Partecipa alla prova**: un modulo con contatti, pizzeria, come lavorano oggi, cosa si aspettano e i consensi (quattro obbligatori, uno facoltativo).
+
+- Le risposte le salva `/api/candidatura` (`src/api/candidatura.js`) nella tabella `candidature`, con data e ora di ogni consenso e la versione dei testi. Prima va eseguito `supabase/supabase-candidature.sql`. La tabella non ha regole RLS: dall'app non si legge né si scrive, si guarda da **Supabase › Table Editor › candidature**. La colonna `stato` (nuova / approvata / scartata) e `note` servono a voi.
+- Protezioni: un campo nascosto ferma i programmi automatici; al massimo 5 invii all'ora dallo stesso indirizzo (salvato solo come impronta).
+- Chi viene approvato entra come **Nuovo cliente creato a mano** (sotto).
+- Il bollino "Versione di prova" dipende da `static IN_PROVA = true`.
+- Consigliato durante la prova: in Supabase › Authentication › Sign In / Providers spegni **Allow new users to sign up**, così nessuno si registra chiamando direttamente Supabase. Gli inviti allo staff da Impostazioni › Persone continuano a funzionare.
+
+**Al rilascio:** `REGISTRAZIONE_APERTA = true` e `IN_PROVA = false`, riaccendi "Allow new users to sign up". Il pulsante di registrazione e tutto il suo flusso tornano come prima; il modulo della prova sparisce. Le scelte del modulo sono scritte due volte, in `Component.CANDIDATURA` e in `SCELTE` di `src/api/candidatura.js`: se ne cambi una, cambia anche l'altra.
+
+## Registrazione dall'app (chiusa durante la prova)
 Nella pagina di accesso c'è **Nuova pizzeria? Crea un account**. Il titolare scrive nome della pizzeria, email e password e accetta l'informativa privacy. Supabase gli manda un'email di conferma; il link riapre l'app, che chiede di accedere. Al primo accesso l'app chiama `crea_mia_pizzeria()` (`supabase/supabase-registrazione.sql`): nasce la pizzeria, con le causali scarto predefinite, e l'account ne diventa titolare. Da lì parte la guida "Prepara la tua pizzeria".
 
 - Un account crea una sola pizzeria. Se il nome esiste già, alla nuova si aggiunge un numero, per esempio "Da Peppe (2)".
