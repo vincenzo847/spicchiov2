@@ -2258,15 +2258,26 @@ class Component extends DCLogic {
     const pct = diff / p * 100, tipo = Math.abs(diff) < 10 || Math.abs(diff) < p * 0.15 ? 'stabile' : diff > 0 ? 'aumento' : 'calo';
     return { attuale: a, precedente: p, diff, pct, tipo };
   }
-  // testi e colori del confronto, uguali in Dashboard e in Scarti; null se entrambe le settimane sono a zero (nessun riquadro)
-  static testoConfrontoScarti(c, eur) {
+  // il servizio della sera è finito dalle 23; dopo mezzanotte, finché la giornata conta ancora su ieri (fine giornata), lo è di sicuro
+  static servizioFatto(ora, fineGiornata) { const h = +ora; return h >= 23 || h < (fineGiornata ?? 5); }
+  // giorni da confrontare con gli stessi della settimana scorsa: da lunedì a oggi solo a servizio finito o se oggi è chiuso,
+  // altrimenti da lunedì a ieri (oggi è ancora in corso, i giorni della settimana scorsa sono interi)
+  static giorniConfrontoScarti(giorni, oggi, servizioFatto, chiusoOggi) {
+    const fino = servizioFatto || chiusoOggi ? 'oggi' : 'ieri', g = (giorni || []).filter(d => fino === 'oggi' ? d <= oggi : d < oggi);
+    const prima = g.map(d => { const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() - 7); return Component.isoD(x); });
+    return { giorni: g, prima, fino, periodoL: fino === 'oggi' ? 'da lunedì' : 'da lunedì a ieri' };
+  }
+  // testi e colori del confronto, uguali in Dashboard e in Scarti; null se entrambe le settimane sono a zero (nessun riquadro).
+  // periodoL: "da lunedì" (con oggi) o "da lunedì a ieri" (il servizio di oggi non è ancora finito)
+  static testoConfrontoScarti(c, eur, periodoL) {
+    const aIeri = periodoL === 'da lunedì a ieri';
     if (!c || (c.attuale < 0.005 && c.precedente < 0.005)) return null;
     const pctL = c.pct == null ? '' : (c.pct >= 0 ? '+' : '−') + Math.round(Math.abs(c.pct)) + '%';
     const base = { tipo: c.tipo, numOn: true, subOn: false, sub: '', txtW: '500', bg: '#fff', fg: '#1d1f20' };
     let t;
-    if (c.tipo === 'nessun_confronto') t = { ...base, num: eur(c.attuale), txt: 'da lunedì' };
-    else if (c.tipo === 'stabile') t = { ...base, numOn: false, num: '', txtW: '600', txt: 'In linea con la settimana scorsa (' + eur(c.attuale) + ' contro ' + eur(c.precedente) + ')' };
-    else t = { ...base, num: (c.diff > 0 ? '+' : '−') + eur(Math.abs(c.diff)), txt: 'rispetto alla settimana scorsa', sub: pctL + ' negli stessi giorni', subOn: true, bg: c.diff > 0 ? '#fde8e5' : '#e3f3e9', fg: c.diff > 0 ? '#a3251b' : '#1a7a43' };
+    if (c.tipo === 'nessun_confronto') t = { ...base, num: eur(c.attuale), txt: aIeri ? 'da lunedì a ieri' : 'da lunedì' };
+    else if (c.tipo === 'stabile') t = { ...base, numOn: false, num: '', txtW: '600', txt: 'In linea con la settimana scorsa (' + eur(c.attuale) + ' contro ' + eur(c.precedente) + (aIeri ? ', da lunedì a ieri' : '') + ')' };
+    else t = { ...base, num: (c.diff > 0 ? '+' : '−') + eur(Math.abs(c.diff)), txt: 'rispetto alla settimana scorsa', sub: pctL + ' negli stessi giorni' + (aIeri ? ', da lunedì a ieri' : ''), subOn: true, bg: c.diff > 0 ? '#fde8e5' : '#e3f3e9', fg: c.diff > 0 ? '#a3251b' : '#1a7a43' };
     return { ...t, l: [t.num, t.txt].filter(Boolean).join(' ') + (t.sub ? ' · ' + t.sub : '') };
   }
   static get DEMO_LOGO() {
@@ -4335,9 +4346,11 @@ class Component extends DCLogic {
     const perD = weekAll.map(k => k > Component.TODAY ? 0 : wsD.filter(w => w.date === k).reduce((a, w) => a + wCost(w), 0)), maxD = Math.max(1, ...perD);
     const daysD = weekAll.map((k, n) => ({ label: fmtDay(k), eur: eur0(perD[n]), h: Math.max(2, perD[n] / maxD * 100) * 0.8 + '%', color: k === Component.TODAY ? 'var(--color-accent-800)' : k > Component.TODAY ? 'var(--color-neutral-300)' : 'var(--color-accent-500)' }));
     // confronto con gli stessi giorni della settimana scorsa: da lunedì a oggi contro da lunedì allo stesso giorno
-    const lastD = wkD.map(k => { const x = new Date(k + 'T12:00:00'); x.setDate(x.getDate() - 7); return Component.isoD(x); });
-    const wasteLast = S.waste.filter(w => w.date >= lastD[0] && w.date <= lastD[lastD.length - 1]).reduce((a, w) => a + wCost(w), 0);
-    const trendW = Component.testoConfrontoScarti(Component.confrontoScarti(wasteD, wasteLast), eur);
+    // confronto con gli stessi giorni della settimana scorsa: fino a ieri finché il servizio di oggi non è finito
+    const gCs = Component.giorniConfrontoScarti(wkD, Component.TODAY, Component.servizioFatto(new Date().getHours(), Component._dayEnd), (S.closedDays || []).includes(new Date(Component.TODAY + 'T12:00:00').getDay()));
+    const sumW = ds => { const set = new Set(ds); return S.waste.filter(w => set.has(w.date)).reduce((a, w) => a + wCost(w), 0); };
+    const wasteNow = sumW(gCs.giorni), wasteLast = sumW(gCs.prima);
+    const trendW = gCs.giorni.length ? Component.testoConfrontoScarti(Component.confrontoScarti(wasteNow, wasteLast), eur, gCs.periodoL) : null;
     const trendBg = t => t ? t.bg : '#fff';
     // torta (somma 100% e 10,00 €) se il margine è positivo; barra con incasso e costi se è negativo
     const SPL = { variabili: ['Food cost (ingredienti e scarti)', '#d4352a', '#fff6ea'], fissi: ['Affitto, personale, energia', '#ffc53d', '#1a1a1a'], mol: ['Margine operativo (MOL)', '#1a7a43', '#fff6ea'], margine: ['Margine dopo ingredienti e scarti', '#1a7a43', '#fff6ea'] };
