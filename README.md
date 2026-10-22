@@ -159,7 +159,7 @@ Dopo l'accesso, in alto compaiono il nome e il logo della pizzeria (senza logo, 
 
 ## Informativa privacy
 Si apre dalla pagina di accesso ("Privacy e uso dei dati") e dal profilo. Prima di usarla con i clienti:
-- sostituisci `[RAGIONE SOCIALE]` (chi gestisce l'app) e `[EMAIL ASSISTENZA]` (l'indirizzo per le richieste privacy) in `sorgente/App.dc.html` e `public/index.html`;
+- chi gestisce l'app è indicato come **SpicchioTest** e l'indirizzo per le richieste privacy è **spicchio.informazioni@gmail.com**: quando ci sarà una società, metti la ragione sociale vera (in `sorgente/App.dc.html` e `public/index.html`);
 - falla controllare da un consulente privacy, insieme al contratto con le pizzerie (art. 28 GDPR) e alla verifica dei fornitori (Supabase, Cloudflare, Anthropic) e della regione del database.
 
 ## Profilo
