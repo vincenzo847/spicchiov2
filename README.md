@@ -124,7 +124,7 @@ L'app li riconosce da sola, senza scegliere colonne. I nomi dei prodotti vengono
 Le righe con un prodotto che inizia con **"Rifacimento"** (es. "Rifacimento – Bufala e Latte") non sono vendite: diventano scarti del piatto intero con causale "Rifacimento". Il piatto si abbina come le vendite (un nome nuovo si chiede una volta); reimportare lo stesso file non li raddoppia.
 
 ## Merce sparita (Scarti)
-A fine serata non si pesa niente: si registrano a mano solo gli imprevisti (pizza bruciata, reso, merce caduta). La merce che manca la misura l'app per ogni ingrediente **fresco** (di base Caseificio, Ortofrutta, Ittico, Salumeria; si cambia nella scheda ingrediente):
+A fine serata non si pesa niente: si registrano a mano solo gli scarti occasionali (pizza bruciata, reso, merce caduta). La merce che manca la misura l'app per ogni ingrediente **fresco** (di base Caseificio, Ortofrutta, Ittico, Salumeria; si cambia nella scheda ingrediente):
 
 non spiegato = acquistato (bolle e fatture, senza doppioni) − consumo da ricetta (piatti venduti × grammi) − scarti registrati.
 
