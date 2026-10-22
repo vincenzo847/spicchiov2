@@ -1,8 +1,8 @@
 // Service worker: l'app si apre anche senza rete.
 // Pagina e /api/config: prima la rete, se manca la copia salvata. Icone e manifest: la copia salvata.
 // /api/claude e Supabase non passano mai dalla cache.
-const CACHE = 'app-v3';
-const STATIC = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
+const CACHE = 'app-v4';
+const STATIC = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png', '/fonts/bricolage-latin-v1.woff2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)).then(() => self.skipWaiting()));

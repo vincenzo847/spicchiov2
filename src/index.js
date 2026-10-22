@@ -17,8 +17,8 @@ function sicurezza(env) {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdnjs.cloudflare.com https://unpkg.com",
     "worker-src 'self' blob: https://cdnjs.cloudflare.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' data: blob: https://fonts.gstatic.com",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data: blob:",
     "img-src 'self' data: blob: " + sb,
     "connect-src 'self' blob: data: " + sb + ' https://cdnjs.cloudflare.com',
     "frame-ancestors 'none'",
@@ -51,6 +51,8 @@ export default {
     for (const [k, v] of Object.entries(sicurezza(env))) res.headers.set(k, v);
     // il service worker va sempre ricontrollato, altrimenti gli aggiornamenti dell'app tardano ad arrivare
     if (url.pathname === '/sw.js') res.headers.set('Cache-Control', 'no-cache');
+    // i font hanno la versione nel nome (…-v1.woff2): il telefono li tiene un anno senza ricontrollarli
+    if (url.pathname.startsWith('/fonts/') && res.ok) res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
     return res;
   },
 
