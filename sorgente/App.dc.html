@@ -294,7 +294,7 @@
               <sc-for list="{{ days }}" as="d" hint-placeholder-count="7"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%"><div style="width:100%;background:{{ d.color }};height:{{ d.h }}"></div></div></sc-for>
             </div>
             <div style="display:flex;gap:6px;margin-top:-8px"><sc-for list="{{ days }}" as="d" hint-placeholder-count="7"><span style="flex:1;text-align:center;font-size:13px;font-weight:600;letter-spacing:.02em;color:#3d3732">{{ d.label }}</span></sc-for></div>
-            <sc-if value="{{ home.hasTrend }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:14px;font-weight:700;border-radius:10px;padding:8px 10px;background:{{ home.trendBgC }};color:#1d1f20;text-wrap:pretty">{{ home.trendL }}</p></sc-if>
+            <sc-if value="{{ home.hasTrend }}" hint-placeholder-val="{{ false }}"><div role="status" aria-label="{{ home.trendL }}" style="border-radius:10px;padding:8px 10px;background:{{ home.trendBgC }};color:#1d1f20;display:flex;flex-direction:column;gap:2px"><div style="display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap"><sc-if value="{{ home.tr.numOn }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ home.tr.fg }};white-space:nowrap">{{ home.tr.num }}</span></sc-if><span style="font-size:15px;line-height:1.35;font-weight:{{ home.tr.txtW }};color:#1d1f20;text-wrap:pretty">{{ home.tr.txt }}</span></div><sc-if value="{{ home.tr.subOn }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;color:#544c45">{{ home.tr.sub }}</span></sc-if></div></sc-if>
             <button class="btn btn-ghost" onClick="{{ goScarti }}" style="align-self:flex-start;margin-top:auto;min-height:44px;gap:8px;padding-inline:0;white-space:nowrap">Apri il registro<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button>
           </div>
           <div class="card" style="display:flex;flex-direction:column;border:2.5px solid #1a1a1a;border-radius:20px;background:#fff;box-shadow:5px 5px 0 #1a1a1a;padding:24px;gap:14px">
@@ -354,7 +354,7 @@
         </sc-if>
         <sc-if value="{{ msv.regOn }}" hint-placeholder-val="{{ true }}">
         <sc-if value="{{ msv.phoneH2On }}" hint-placeholder-val="{{ false }}"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Registra uno scarto</h2></sc-if>
-        <sc-if value="{{ wv.hasTrend }}" hint-placeholder-val="{{ false }}"><div role="status" style="border:2px solid #1d1f20;border-radius:14px;background:{{ wv.trendBgC }};color:#1d1f20;padding:12px 14px;font-size:15px;font-weight:700;text-wrap:pretty">{{ wv.trendL }}</div></sc-if>
+        <sc-if value="{{ wv.hasTrend }}" hint-placeholder-val="{{ false }}"><div role="status" aria-label="{{ wv.trendL }}" style="border:2px solid #1d1f20;border-radius:14px;background:{{ wv.trendBgC }};color:#1d1f20;padding:12px 16px;display:flex;flex-direction:column;gap:2px"><div style="display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap"><sc-if value="{{ wv.tr.numOn }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--font-heading);font-weight:800;font-size:28px;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ wv.tr.fg }};white-space:nowrap">{{ wv.tr.num }}</span></sc-if><span style="font-size:16px;line-height:1.35;font-weight:{{ wv.tr.txtW }};color:#1d1f20;text-wrap:pretty">{{ wv.tr.txt }}</span></div><sc-if value="{{ wv.tr.subOn }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;color:#544c45">{{ wv.tr.sub }}</span></sc-if></div></sc-if>
         <sc-if value="{{ wv.showKpis }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><sc-if value="{{ msv.h1On }}" hint-placeholder-val="{{ false }}"><h1 style="margin:0;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05">Registra uno scarto</h1></sc-if><sc-if value="{{ pendingOn }}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size:14px;font-weight:700;background:#ffc53d;border:2px solid #1d1f20;border-radius:99px;padding:3px 12px;white-space:nowrap">{{ pendingL }}</span></sc-if></div>
@@ -2250,6 +2250,25 @@ class Component extends DCLogic {
     });
     return { piatti: out, soglie, soli };
   }
+  // CONFRONTO SCARTI da lunedì contro gli stessi giorni della settimana scorsa. Conta la differenza in euro;
+  // è "stabile" (nessun allarme, nessun colore di avviso) se è sotto 10 € oppure sotto il 15% della settimana scorsa.
+  static confrontoScarti(attuale, precedente) {
+    const a = Math.max(0, +attuale || 0), p = Math.max(0, +precedente || 0), diff = a - p;
+    if (!(p >= 0.005)) return { attuale: a, precedente: p, diff, pct: null, tipo: 'nessun_confronto' };
+    const pct = diff / p * 100, tipo = Math.abs(diff) < 10 || Math.abs(diff) < p * 0.15 ? 'stabile' : diff > 0 ? 'aumento' : 'calo';
+    return { attuale: a, precedente: p, diff, pct, tipo };
+  }
+  // testi e colori del confronto, uguali in Dashboard e in Scarti; null se entrambe le settimane sono a zero (nessun riquadro)
+  static testoConfrontoScarti(c, eur) {
+    if (!c || (c.attuale < 0.005 && c.precedente < 0.005)) return null;
+    const pctL = c.pct == null ? '' : (c.pct >= 0 ? '+' : '−') + Math.round(Math.abs(c.pct)) + '%';
+    const base = { tipo: c.tipo, numOn: true, subOn: false, sub: '', txtW: '500', bg: '#fff', fg: '#1d1f20' };
+    let t;
+    if (c.tipo === 'nessun_confronto') t = { ...base, num: eur(c.attuale), txt: 'da lunedì' };
+    else if (c.tipo === 'stabile') t = { ...base, numOn: false, num: '', txtW: '600', txt: 'In linea con la settimana scorsa (' + eur(c.attuale) + ' contro ' + eur(c.precedente) + ')' };
+    else t = { ...base, num: (c.diff > 0 ? '+' : '−') + eur(Math.abs(c.diff)), txt: 'rispetto alla settimana scorsa', sub: pctL + ' negli stessi giorni', subOn: true, bg: c.diff > 0 ? '#fde8e5' : '#e3f3e9', fg: c.diff > 0 ? '#a3251b' : '#1a7a43' };
+    return { ...t, l: [t.num, t.txt].filter(Boolean).join(' ') + (t.sub ? ' · ' + t.sub : '') };
+  }
   static get DEMO_LOGO() {
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="#fff6ea" stroke="#1d1f20" stroke-width="4"/><circle cx="50" cy="50" r="40" fill="none" stroke="#d4352a" stroke-width="2" stroke-dasharray="2 3.5"/><path d="M50 17c-5 0-8 3-9 6-5-1-9 3-9 7 0 3 2 6 5 7v6h26v-6c3-1 5-4 5-7 0-4-4-8-9-7-1-3-4-6-9-6z" fill="#fff" stroke="#1d1f20" stroke-width="2.5" stroke-linejoin="round"/><path d="M37 39h26" stroke="#1d1f20" stroke-width="2"/><text x="50" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="700" fill="#1d1f20" letter-spacing="2">GLI</text><text x="50" y="69" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="700" fill="#d4352a" textLength="58" lengthAdjust="spacingAndGlyphs">ARTIGIANI</text><path d="M36 76h28" stroke="#1d1f20" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="81" r="2" fill="#d4352a"/></svg>';
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
@@ -3557,7 +3576,7 @@ class Component extends DCLogic {
           { label: 'Ultimi 7 giorni', value: eur(wasteTot), sub: S.role === 'staff' && !S.demo ? wk.length + (wk.length === 1 ? ' voce' : ' voci') : pct(revenue ? wasteTot / revenue * 100 : 0) + ' dell’incasso' },
           { label: 'Causa principale', value: top ? top[0] : '—', sub: top ? eur(top[1]) + ' in 7 giorni' : 'nessuno scarto' }
         ],
-        hasTrend: !!trendW, trendL: trendW ? trendW.l : '', trendBgC: trendBg(trendW),
+        hasTrend: !!trendW, trendL: trendW ? trendW.l : '', trendBgC: trendBg(trendW), tr: trendW || {},
         logDays, hasLog: logDays.length > 0, noLog: !logDays.length, logTotL: wk.length + (wk.length === 1 ? ' voce · ' : ' voci · ') + eur(wasteTot),
         why: byReason.map(r => ({ label: r.label, eur: eur(r.v), w: (r.v / maxR * 100) + '%' })), hasWhy: byReason.length > 0,
         openReasons: () => this.setState({ wrDlg: true }), wrOpen: !!S.wrDlg, closeReasons: () => this.setState({ wrDlg: false, wrDraft: null }), wrGroups
@@ -4318,15 +4337,8 @@ class Component extends DCLogic {
     // confronto con gli stessi giorni della settimana scorsa: da lunedì a oggi contro da lunedì allo stesso giorno
     const lastD = wkD.map(k => { const x = new Date(k + 'T12:00:00'); x.setDate(x.getDate() - 7); return Component.isoD(x); });
     const wasteLast = S.waste.filter(w => w.date >= lastD[0] && w.date <= lastD[lastD.length - 1]).reduce((a, w) => a + wCost(w), 0);
-    const trendW = (() => {
-      if (wasteLast < 1 && wasteD < 1) return null;
-      if (wasteLast < 1) return { tone: 'bad', l: 'Da lunedì ' + eur(wasteD) + ' di scarti; la settimana scorsa, negli stessi giorni, quasi niente.' };
-      const d = (wasteD / wasteLast - 1) * 100;
-      if (Math.abs(d) < 5) return { tone: 'flat', l: 'Da lunedì avete buttato quanto la settimana scorsa negli stessi giorni (' + eur(wasteD) + ').' };
-      return d < 0 ? { tone: 'good', l: 'Da lunedì avete buttato il ' + Math.round(-d) + '% in meno della settimana scorsa negli stessi giorni: ' + eur(wasteLast - wasteD) + ' risparmiati.' }
-        : { tone: 'bad', l: 'Da lunedì avete buttato il ' + Math.round(d) + '% in più della settimana scorsa negli stessi giorni: ' + eur(wasteD - wasteLast) + ' in più.' };
-    })();
-    const trendBg = t => !t ? '#fff' : t.tone === 'good' ? '#e3f3e9' : t.tone === 'bad' ? '#fde8e5' : '#fff';
+    const trendW = Component.testoConfrontoScarti(Component.confrontoScarti(wasteD, wasteLast), eur);
+    const trendBg = t => t ? t.bg : '#fff';
     // torta (somma 100% e 10,00 €) se il margine è positivo; barra con incasso e costi se è negativo
     const SPL = { variabili: ['Food cost (ingredienti e scarti)', '#d4352a', '#fff6ea'], fissi: ['Affitto, personale, energia', '#ffc53d', '#1a1a1a'], mol: ['Margine operativo (MOL)', '#1a7a43', '#fff6ea'], margine: ['Margine dopo ingredienti e scarti', '#1a7a43', '#fff6ea'] };
     const pct2 = v => v.toFixed(2).replace('.', ',') + '%';
@@ -4366,7 +4378,7 @@ class Component extends DCLogic {
       fcState: fcD <= target ? 'Nell’obiettivo' : 'Sopra l’obiettivo', fcTag: fcD <= target ? 'tag tag-neutral' : 'tag tag-accent',
       fcSay: fcD <= target ? 'Ottimo: l’obiettivo è restare sotto ' + eur(target / 10) + ' ogni 10 € incassati.' : 'L’obiettivo è ' + eur(target / 10) + ': stai spendendo ' + eur((fcD - target) / 10) + ' in più ogni 10 € incassati.',
       wasteL: eur0(wasteD),
-      trendL: trendW ? trendW.l : '', hasTrend: !!trendW, trendBgC: trendBg(trendW),
+      trendL: trendW ? trendW.l : '', hasTrend: !!trendW, trendBgC: trendBg(trendW), tr: trendW || {},
 
       bestName: bestD ? bestD.p.name : '—', bestSay: bestD ? '' : 'Ancora nessuna vendita questa settimana.', hasBest: !!bestD, noBest: !bestD,
       // la scheda del piatto migliore: tre dati in elenco, guadagno = prezzo senza IVA meno ingredienti
