@@ -923,6 +923,44 @@
         <label class="btn btn-primary" style="border:2.5px solid #1a1a1a;border-radius:16px;box-shadow:4px 4px 0 #1a1a1a;font-weight:700;height:auto;min-height:120px;padding:20px 24px;display:flex;justify-content:flex-start;align-items:center;gap:20px;text-align:left;cursor:pointer"><span style="flex:none;width:60px;height:60px;border:2.5px solid #1a1a1a;border-radius:50%;background:#fff6ea;color:#1a1a1a;display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg></span><span style="display:flex;flex-direction:column;gap:6px;min-width:0;white-space:normal"><span style="display:block;font-weight:800;font-size:25px;letter-spacing:-.02em;line-height:1.05;white-space:normal">Fotografa documento</span><span style="display:block;font-size:15px;opacity:.85;font-weight:400;line-height:1.35;white-space:normal">Dal telefono: inquadra la bolla o la fattura.</span></span><input type="file" accept="image/*" capture="environment" onChange="{{ pickDdt }}" style="display:none"></label>
         <label class="btn btn-secondary" style="background:#ffc53d;color:#1a1a1a;border:2.5px solid #1a1a1a;border-radius:22px;box-shadow:5px 5px 0 #1a1a1a;height:auto;min-height:120px;padding:20px 24px;display:flex;justify-content:flex-start;align-items:center;gap:20px;text-align:left;cursor:pointer"><span style="flex:none;width:60px;height:60px;border:2.5px solid #1a1a1a;border-radius:50%;background:#fff6ea;color:#1a1a1a;display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg></span><span style="display:flex;flex-direction:column;gap:6px;min-width:0;white-space:normal"><span style="display:block;font-weight:800;font-size:25px;letter-spacing:-.02em;line-height:1.05;white-space:normal">Carica PDF o foto</span><span style="display:block;font-size:15px;opacity:.85;font-weight:400;line-height:1.35;white-space:normal">Dal computer: scegli il file ricevuto via mail.</span></span><input type="file" accept="application/pdf,image/*,.pdf" onChange="{{ pickDdt }}" style="display:none"></label>
       </div>
+      <div role="tablist" aria-label="Bolle e fatture" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border:2.5px solid #1d1f20;border-radius:18px;background:#fff">
+        <sc-for list="{{ archTabs }}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{ t.sel }}" onClick="{{ t.pick }}" style="font:inherit;font-size:15px;font-weight:800;min-height:52px;padding:6px 8px;border:0;border-radius:14px;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;text-align:center;line-height:1.15">{{ t.l }}<sc-if value="{{ t.hasN }}" hint-placeholder-val="{{ false }}"><span style="flex:none;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:{{ t.nBg }};color:#fff;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center">{{ t.n }}</span></sc-if></button></sc-for>
+      </div>
+      <sc-if value="{{ archTabPagare }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:var(--font-heading);font-weight:800;font-size:24px;letter-spacing:-.01em">{{ payHead }}</span><span style="font-size:15px;color:#544c45;text-wrap:pretty">{{ paySub }}</span></div>
+          <sc-for list="{{ payGroups }}" as="g" hint-placeholder-count="2">
+            <section style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid #1d1f20;padding-bottom:4px"><h2 style="margin:0;font-size:20px;font-weight:800;color:{{ g.titleC }}">{{ g.title }}</h2><span style="font-size:14px;color:#544c45;font-variant-numeric:tabular-nums">{{ g.sub }}</span></div>
+              <sc-for list="{{ g.rows }}" as="f" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;background:{{ f.bg }};border:1.5px solid #d9ccb8;border-radius:14px;padding:10px 12px">
+                  <button onClick="{{ f.open }}" style="flex:1 1 220px;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;font:inherit;color:inherit;background:transparent;border:0;padding:4px 0;text-align:left;cursor:pointer;min-height:44px">
+                    <span style="font-size:17px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.supplier }}</span><span style="font-family:var(--font-heading);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap">{{ f.totalL }}</span>
+                    <span style="font-size:13px;color:#544c45">{{ f.numL }}<sc-if value="{{ f.demo }}" hint-placeholder-val="{{ false }}"> · Esempio</sc-if></span><span style="font-size:14px;font-weight:700;color:{{ f.dueC }};white-space:nowrap">{{ f.dueL }}</span>
+                  </button>
+                  <button onClick="{{ f.pay }}" style="flex:none;font:inherit;font-size:14px;font-weight:800;min-height:44px;padding:0 14px;border:2px solid #1d1f20;border-radius:99px;background:#1a7a43;color:#fff;cursor:pointer;white-space:nowrap">Segna pagata</button>
+                </div>
+              </sc-for>
+            </section>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ archTabBolle }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:var(--font-heading);font-weight:800;font-size:24px;letter-spacing:-.01em">{{ billHead }}</span><span style="font-size:15px;color:#544c45;text-wrap:pretty">{{ billSub }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px">
+            <sc-for list="{{ billGroups }}" as="g" hint-placeholder-count="4">
+              <button onClick="{{ g.open }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;font:inherit;color:#1d1f20;background:{{ g.stBg }};border:2px solid {{ g.bd }};border-radius:14px;padding:12px 14px;text-align:left;cursor:pointer;min-height:44px">
+                <span style="font-size:17px;font-weight:800">{{ g.sup }}</span>
+                <span style="font-size:14px;color:#544c45">{{ g.meseL }} · {{ g.nL }}</span>
+                <span style="font-size:14px;font-weight:700;color:{{ g.stC }}">{{ g.stL }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <span style="font-size:13px;color:#544c45">Tocca un fornitore per vedere le sue bolle nell’Archivio. Quando arriva la fattura caricala: viene abbinata alle bolle in automatico.</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{ archTabArch }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
           <input class="input" type="search" value="{{ archQ }}" onChange="{{ setArchQ }}" placeholder="Cerca fornitore, numero o prodotto" style="flex:1 1 280px;min-width:0;min-height:48px;font-size:16px">
@@ -958,6 +996,7 @@
           </div>
         </div>
       </div>
+      </sc-if>
       <p style="margin:0;font-size:14px;color:var(--color-neutral-700)">Ogni file viene salvato per fornitore, anno e mese, per esempio Caseificio / 2026 / 10-Ottobre.</p>
     </sc-if>
 
@@ -2346,6 +2385,25 @@ class Component extends DCLogic {
     obiettivi: ['Tenere sotto controllo il food cost', 'Ridurre gli scarti', 'Capire i margini', 'Controllare i prezzi dei fornitori', 'Altro'],
     feedback: ['Una chiamata di 15 minuti a settimana', 'Messaggi WhatsApp', 'Tutti e due']
   };
+  // SCADENZARIO di Acquisti: fatture non pagate divise per scadenza e bolle senza fattura raggruppate per fornitore e mese.
+  // Una bolla è "in ritardo" quando il suo mese è finito e la fattura non è arrivata entro il 15 del mese dopo.
+  static scadenzario(docs, oggi) {
+    const D = docs || [], fatt = D.filter(d => d.type === 'Fattura'), conFatt = new Set(fatt.flatMap(f => f.ddtIds || []));
+    const add = (d, n) => { const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + n); return Component.isoD(x); };
+    const entro15 = mese => { const y = +mese.slice(0, 4), m = +mese.slice(5, 7); return (m === 12 ? (y + 1) + '-01' : y + '-' + String(m + 1).padStart(2, '0')) + '-15'; };
+    const daPagare = fatt.filter(f => !f.paid).sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999') || (a.date || '').localeCompare(b.date || ''));
+    const fra10 = add(oggi, 10);
+    const scadute = daPagare.filter(f => f.due && f.due < oggi), presto = daPagare.filter(f => f.due && f.due >= oggi && f.due <= fra10), dopo = daPagare.filter(f => !f.due || f.due > fra10);
+    const gruppi = {};
+    D.filter(d => d.type === 'DDT' && d.date && !conFatt.has(d.id)).forEach(d => {
+      const sup = d.supplier || '—', mese = d.date.slice(0, 7), k = (d.supId || sup) + '|' + mese;
+      const g = gruppi[k] = gruppi[k] || { sup, mese, ids: [], n: 0, tot: 0, ritardo: oggi > entro15(mese), attesaFino: entro15(mese) };
+      g.ids.push(d.id); g.n++; g.tot += +d.total || 0;
+    });
+    const bolle = Object.values(gruppi).sort((a, b) => (b.ritardo - a.ritardo) || (a.ritardo ? a.mese.localeCompare(b.mese) : b.mese.localeCompare(a.mese)) || a.sup.localeCompare(b.sup));
+    const somma = l => l.reduce((a, f) => a + (+f.total || 0), 0);
+    return { scadute, presto, dopo, nPagare: daPagare.length, totPagare: somma(daPagare), totScadute: somma(scadute), prossima: (daPagare.find(f => f.due && f.due >= oggi) || {}).due || null, bolle, nRitardo: bolle.filter(g => g.ritardo).length };
+  }
   static get DEMO_LOGO() {
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="#fff6ea" stroke="#1d1f20" stroke-width="4"/><circle cx="50" cy="50" r="40" fill="none" stroke="#d4352a" stroke-width="2" stroke-dasharray="2 3.5"/><path d="M50 17c-5 0-8 3-9 6-5-1-9 3-9 7 0 3 2 6 5 7v6h26v-6c3-1 5-4 5-7 0-4-4-8-9-7-1-3-4-6-9-6z" fill="#fff" stroke="#1d1f20" stroke-width="2.5" stroke-linejoin="round"/><path d="M37 39h26" stroke="#1d1f20" stroke-width="2"/><text x="50" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="700" fill="#1d1f20" letter-spacing="2">GLI</text><text x="50" y="69" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="700" fill="#d4352a" textLength="58" lengthAdjust="spacingAndGlyphs">ARTIGIANI</text><path d="M36 76h28" stroke="#1d1f20" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="81" r="2" fill="#d4352a"/></svg>';
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
@@ -3851,8 +3909,10 @@ class Component extends DCLogic {
     const unpaid = fatt.filter(f => !f.paid), overdue = unpaid.filter(f => f.due && f.due < T);
     const toBill = docs.filter(d => d.type === 'DDT' && !invOf(d.id));
     const perL = { m: 'Mese corrente', q: 'Ultimi 3 mesi', y: 'Anno ' + T.slice(0, 4), all: 'Tutto lo storico' }[per];
-    const archHero = { kicker: 'Documenti fornitori · ' + perL, title: 'Archivio',
-      vars: [['m', 'Mese'], ['q', '3 mesi'], ['y', 'Anno'], ['all', 'Tutto']].map(([k, l]) => ({ label: l, name: 'arch-per', checked: per === k, onChange: () => this.setState({ archPeriod: k }) })),
+    // scheda di Bolle e fatture: quella scelta, altrimenti Da pagare se ci sono fatture aperte, poi Bolle senza fattura
+    const archTab0 = S.archTab || (fatt.some(f => !f.paid) ? 'pagare' : docs.some(d => d.type === 'DDT' && !invOf(d.id)) ? 'bolle' : 'arch');
+    const archHero = { kicker: archTab0 === 'arch' ? 'Documenti fornitori · ' + perL : 'Documenti fornitori', title: 'Bolle e fatture',
+      vars: archTab0 !== 'arch' ? [] : [['m', 'Mese'], ['q', '3 mesi'], ['y', 'Anno'], ['all', 'Tutto']].map(([k, l]) => ({ label: l, name: 'arch-per', checked: per === k, onChange: () => this.setState({ archPeriod: k }) })),
       stats: [st('Documenti', String(pd.length), pd.filter(d => d.type === 'DDT').length + ' DDT · ' + pd.filter(d => d.type === 'Fattura').length + (pd.filter(d => d.type === 'Fattura').length === 1 ? ' fattura' : ' fatture')), st('Speso', eur0(spendTot), 'bolle alla data di consegna e fatture senza bolle'), st('Da pagare', eur0(unpaid.reduce((a, f) => a + (f.total || 0), 0)), unpaid.length + (unpaid.length === 1 ? ' fattura' : ' fatture') + (overdue.length ? ' · ' + overdue.length + (overdue.length === 1 ? ' scaduta' : ' scadute') : '')), st('DDT da fatturare', String(toBill.length), 'in attesa di fattura')] };
 
     const V = S.archView, doc = V ? docs.find(d => d.id === V.id) : null;
@@ -3913,6 +3973,25 @@ class Component extends DCLogic {
       archHero, archQ: S.archQ || '', setArchQ: e => this.setState({ archQ: e.target.value }),
       archTypeOpts: [['all', 'Tutti'], ['DDT', 'DDT'], ['Fattura', 'Fatture']].map(([k, l]) => ({ label: l, checked: tf === k, onChange: () => this.setState({ archType: k }) })),
       archRows, hasArchRows: archRows.length > 0, archEmpty: !archRows.length,
+      ...(() => {
+        // schede: Da pagare (se ci sono fatture aperte), altrimenti Bolle senza fattura; Archivio è l'elenco di sempre
+        const SC = Component.scadenzario(docs, T), MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+        const tab = archTab0;
+        const pay = f => e => { if (e && e.stopPropagation) e.stopPropagation(); if (this.staffDocs()) return; upd(f.id, { paid: true, paidDate: T }); this.notify('Fattura ' + (f.number || '') + ' di ' + (f.supplier || '') + ' segnata come pagata. Per toglierla: aprila dall’Archivio.'); };
+        const fRow = (f, tone) => ({ id: f.id, supplier: f.supplier || '—', numL: 'Fattura ' + (f.number ? 'n. ' + f.number : 's.n.') + ' · del ' + fmtD(f.date).slice(0, 5), totalL: eur(f.total || 0), dueL: f.due ? (f.due < T ? 'Scaduta il ' : 'Scade il ') + fmtD(f.due).slice(0, 5) : 'Senza scadenza', dueC: tone === 'r' ? '#a3251b' : '#1d1f20', bg: tone === 'r' ? '#fde8e5' : '#fff', demo: !!f.demo, open: () => this.openDoc(f.id), pay: pay(f) });
+        const grp = (l, k, tone) => l.length ? [{ k, title: { r: 'Scadute', y: 'Entro 10 giorni', n: 'Più avanti' }[tone], sub: l.length + (l.length === 1 ? ' fattura · ' : ' fatture · ') + eur0(l.reduce((a, f) => a + (+f.total || 0), 0)), titleC: tone === 'r' ? '#a3251b' : '#1d1f20', rows: l.map(f => fRow(f, tone)) }] : [];
+        const tabs = [['pagare', 'Da pagare', SC.nPagare, SC.scadute.length ? '#d4352a' : '#1d1f20'], ['bolle', 'Bolle senza fattura', SC.nRitardo, '#d4352a'], ['arch', 'Archivio', 0, '']].map(([k, l, n, c]) => ({ l, n: n ? String(n) : '', hasN: !!n, nBg: c, sel: tab === k ? 'true' : 'false', bg: tab === k ? '#1d1f20' : '#fff', fg: tab === k ? '#fff6ea' : '#1d1f20', pick: () => this.setState({ archTab: k }) }));
+        return {
+          archTabs: tabs, archTabPagare: tab === 'pagare', archTabBolle: tab === 'bolle', archTabArch: tab === 'arch',
+          payHead: SC.nPagare ? SC.nPagare + (SC.nPagare === 1 ? ' fattura da pagare · ' : ' fatture da pagare · ') + eur0(SC.totPagare) : 'Nessuna fattura da pagare.',
+          paySub: SC.scadute.length ? SC.scadute.length + (SC.scadute.length === 1 ? ' è scaduta' : ' sono scadute') + ' (' + eur0(SC.totScadute) + ')' + (SC.prossima ? ' · prossima scadenza ' + fmtD(SC.prossima).slice(0, 5) : '') : SC.prossima ? 'Prossima scadenza ' + fmtD(SC.prossima).slice(0, 5) : SC.nPagare ? '' : 'Quando carichi una fattura, compare qui finché non la segni pagata.',
+          payGroups: [...grp(SC.scadute, 'scad', 'r'), ...grp(SC.presto, 'presto', 'y'), ...grp(SC.dopo, 'dopo', 'n')], payNone: !SC.nPagare,
+          billHead: SC.bolle.length ? SC.bolle.reduce((a, g) => a + g.n, 0) + ' bolle senza fattura · ' + eur0(SC.bolle.reduce((a, g) => a + g.tot, 0)) : 'Tutte le bolle hanno la loro fattura.',
+          billSub: SC.nRitardo ? (SC.nRitardo === 1 ? '1 fornitore è in ritardo con la fattura.' : SC.nRitardo + ' fornitori sono in ritardo con la fattura.') + ' Le altre sono in attesa: di solito la fattura arriva entro il 15 del mese dopo.' : SC.bolle.length ? 'Nessun ritardo: di solito la fattura arriva entro il 15 del mese dopo.' : '',
+          billNone: !SC.bolle.length,
+          billGroups: SC.bolle.map(g => ({ k: g.sup + g.mese, sup: g.sup, meseL: MESI[+g.mese.slice(5, 7) - 1] + ' ' + g.mese.slice(0, 4), nL: g.n + (g.n === 1 ? ' bolla' : ' bolle') + ' · ' + eur(g.tot), stL: g.ritardo ? 'Fattura in ritardo' : 'In attesa fino al ' + fmtD(g.attesaFino).slice(0, 5), stBg: g.ritardo ? '#fde8e5' : '#fff', stC: g.ritardo ? '#a3251b' : '#544c45', bd: g.ritardo ? '#a3251b' : '#d9ccb8', open: () => this.setState({ archTab: 'arch', archQ: g.sup, archType: 'DDT', archPeriod: 'all' }) }))
+        };
+      })(),
       archEmptyL: docs.length ? 'Nessun documento con questi filtri.' : 'Ancora nessun documento. Carica il primo DDT o la prima fattura.',
       spendRows, spendTotL: eur0(spendTot),
       closeDoc: () => { if (V && V.url) URL.revokeObjectURL(V.url); this.setState({ archView: null }); },
@@ -4178,7 +4257,7 @@ class Component extends DCLogic {
       const spent = ds.filter(d => d.date.slice(0, 4) === yrS && (d.type === 'DDT' || !(d.ddtIds || []).some(id => docsS.some(x => x.id === id && x.type === 'DDT')))).reduce((a, d) => a + (d.total || 0), 0);
       const unpaid = ds.filter(d => d.type === 'Fattura' && !d.paid).reduce((a, d) => a + (d.total || 0), 0);
       unpaidAll += unpaid;
-      return { name: x.name, cat: x.cat || 'Senza categoria', vatL: x.vat ? 'P.IVA ' + x.vat : '', hasVat: !!x.vat, contactL: [x.contact, x.phone, x.email].filter(Boolean).join(' · '), hasContact: !!(x.contact || x.phone || x.email), aliasL: (x.aliases || []).length ? 'Sui documenti anche come: ' + x.aliases.join(', ') : '', hasAlias: (x.aliases || []).length > 0, nDocL: String(ds.length), spentL: eur0(spent), unpaidL: eur0(unpaid), hasPhone: !!x.phone, tel: 'tel:' + String(x.phone || '').replace(/\s/g, ''), hasEmail: !!x.email, mail: 'mailto:' + (x.email || ''), hasNote: !!x.note, note: x.note || '', edit: () => this.setState({ supForm: { ...x } }), docs: go('arch', { archQ: x.name, archPeriod: 'all', archType: 'all' }) };
+      return { name: x.name, cat: x.cat || 'Senza categoria', vatL: x.vat ? 'P.IVA ' + x.vat : '', hasVat: !!x.vat, contactL: [x.contact, x.phone, x.email].filter(Boolean).join(' · '), hasContact: !!(x.contact || x.phone || x.email), aliasL: (x.aliases || []).length ? 'Sui documenti anche come: ' + x.aliases.join(', ') : '', hasAlias: (x.aliases || []).length > 0, nDocL: String(ds.length), spentL: eur0(spent), unpaidL: eur0(unpaid), hasPhone: !!x.phone, tel: 'tel:' + String(x.phone || '').replace(/\s/g, ''), hasEmail: !!x.email, mail: 'mailto:' + (x.email || ''), hasNote: !!x.note, note: x.note || '', edit: () => this.setState({ supForm: { ...x } }), docs: go('arch', { archQ: x.name, archPeriod: 'all', archType: 'all', archTab: 'arch' }) };
     }).sort((a, b) => a.name.localeCompare(b.name));
     const unm = {};
     docsS.forEach(d => { if (docSup(d)) return; const k = Component.supKey(d.supplier); if (!k) return; (unm[k] = unm[k] || { name: d.supplier, n: 0, vat: d.vat || '', cat: d.sup || '' }).n++; });
@@ -4418,8 +4497,8 @@ class Component extends DCLogic {
       opts: [0, 0.5, 1, 1.5, 2, 3].map(v => ({ l: vaschL(v), pick: answerDiag(i, v) })) }));
     const todo = [];
     merceAlarm.forEach(m => todo.push({ title: m.i.name + ': tra ' + kgL(Math.max(0, m.min)) + ' e ' + kgL(m.max) + ' kg spariti nell’ultimo mese (' + Math.round(Math.max(0, m.eurMin)).toLocaleString('it-IT') + '–' + eur0(m.eurMax) + ')', detail: 'Comprati ' + kgL(m.acquistato) + ' kg, nelle ricette ' + kgL(m.consumo) + ' kg, scarti registrati ' + kgL(m.scarti) + ' kg.', cta: 'Vedi merce sparita', icon: '?', bg: '#d4352a', fg: '#fff6ea', go: goMerce(m.i.id) }));
-    if (overF.length) todo.push({ title: overF.length === 1 ? 'Una fattura è scaduta' : overF.length + ' fatture sono scadute', detail: eur0(sumT(overF)) + ' da pagare a ' + [...new Set(overF.map(d => d.supplier))].join(', ') + '.', cta: 'Vedi fatture', icon: '!', bg: '#d4352a', fg: '#fff6ea', go: go('arch', { archPeriod: 'all', archType: 'Fattura', archQ: '' }) });
-    if (soonF.length) todo.push({ title: soonF.length === 1 ? 'Una fattura scade a breve' : soonF.length + ' fatture scadono a breve', detail: eur0(sumT(soonF)) + ' da pagare nei prossimi 10 giorni.', cta: 'Vedi fatture', icon: '!', bg: '#d4352a', fg: '#fff6ea', go: go('arch', { archPeriod: 'all', archType: 'Fattura', archQ: '' }) });
+    if (overF.length) todo.push({ title: overF.length === 1 ? 'Una fattura è scaduta' : overF.length + ' fatture sono scadute', detail: eur0(sumT(overF)) + ' da pagare a ' + [...new Set(overF.map(d => d.supplier))].join(', ') + '.', cta: 'Vedi fatture', icon: '!', bg: '#d4352a', fg: '#fff6ea', go: go('arch', { archPeriod: 'all', archType: 'Fattura', archQ: '', archTab: 'pagare' }) });
+    if (soonF.length) todo.push({ title: soonF.length === 1 ? 'Una fattura scade a breve' : soonF.length + ' fatture scadono a breve', detail: eur0(sumT(soonF)) + ' da pagare nei prossimi 10 giorni.', cta: 'Vedi fatture', icon: '!', bg: '#d4352a', fg: '#fff6ea', go: go('arch', { archPeriod: 'all', archType: 'Fattura', archQ: '', archTab: 'pagare' }) });
     // documenti dello staff con prezzi ancora fuori dal listino
     const pendD = S.role === 'staff' && !S.demo ? [] : docsAll.filter(d => d.pending);
     if (pendD.length) todo.push({ title: pendD.length === 1 ? 'Un documento dello staff da confermare' : pendD.length + ' documenti dello staff da confermare', detail: 'I prezzi non sono ancora nel listino: controllali e conferma.', cta: 'Controlla', icon: '✓', bg: '#ffc53d', fg: '#1a1a1a', go: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'arch' }); this.openDoc(pendD[0].id); } });
@@ -4428,7 +4507,7 @@ class Component extends DCLogic {
     mismInv.forEach(d => { const m = this.mismOf(d); todo.push({ title: 'Fattura ' + (d.number || '') + ' di ' + d.supplier + ': prezzi diversi dalle bolle', detail: (m.length === 1 ? '1 prodotto ha' : m.length + ' prodotti hanno') + ' un prezzo diverso da quello scritto sulla bolla. Controlla prima di pagare.', cta: 'Controlla', icon: '≠', bg: '#ffc53d', fg: '#1a1a1a', go: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'arch' }); this.openDoc(d.id); } }); });
     const billDue = d => { const y = +d.slice(0, 4), m = +d.slice(5, 7); return (m === 12 ? (y + 1) + '-01' : y + '-' + String(m + 1).padStart(2, '0')) + '-15'; };
     const toBillN = docsAll.filter(d => d.type === 'DDT' && d.date && d.date.slice(0, 7) < T0.slice(0, 7) && T0 > billDue(d.date) && !fattAll.some(f => (f.ddtIds || []).includes(d.id))).length;
-    if (toBillN) todo.push({ title: toBillN === 1 ? 'Una bolla aspetta la fattura' : toBillN + ' bolle aspettano la fattura', detail: 'Quando arriva la fattura caricala: viene abbinata alle bolle in automatico.', cta: 'Vedi bolle', icon: '⇄', bg: '#1a7a43', fg: '#fff6ea', go: go('arch', { archType: 'DDT', archPeriod: 'all', archQ: '' }) });
+    if (toBillN) todo.push({ title: toBillN === 1 ? 'Una bolla aspetta la fattura' : toBillN + ' bolle aspettano la fattura', detail: 'Quando arriva la fattura caricala: viene abbinata alle bolle in automatico.', cta: 'Vedi bolle', icon: '⇄', bg: '#1a7a43', fg: '#fff6ea', go: go('arch', { archType: 'DDT', archPeriod: 'all', archQ: '', archTab: 'bolle' }) });
     // Dashboard: il conto della settimana scorsa completa (lun–dom) per titolo, grafico e food cost; scarti e piatti da lunedì a oggi
     const perW = Component.periodoChiuso('w'), CW = contoDi(perW), CN = contoDi(Component.periodoInCorso('w'));
     const wtd = CN.days, wkD = Component.daysBetween(Component.perStart('w'), Component.TODAY), wsD = S.waste.filter(w => w.date >= wkD[0] && w.date <= Component.TODAY);
