@@ -4630,7 +4630,9 @@ class Component extends DCLogic {
       const cols = fCols.map(c => c.map(n => ({ ...n })));
       const base = Math.max(fTot, fVarTot + fFixTot);
       const k = (c1 - c0 - (vert ? 0 : 60) - gap * (Math.max(cols[0].length, 3) - 1)) / base, sz = v => v > 0 ? Math.max(v * k, 2) : 0;
-      let y = c0; cols[0].forEach(n => { n.a = y; n.b = y + sz(n.v); y = n.b + gap; });
+      // prima colonna: sul computer ogni categoria ha almeno lo spazio della sua etichetta (nome e importo), anche se vale pochi euro
+      const slot0 = vert ? 0 : 46;
+      let y = c0, lc0 = -1e9; cols[0].forEach(n => { const s = sz(n.v); n.a = Math.max(y, lc0 + slot0 - s / 2); n.b = n.a + s; lc0 = (n.a + n.b) / 2; y = n.b + gap; });
       const t = cols[1][0], ext = y - gap - c0; t.a = c0 + Math.max(0, (ext - sz(t.v)) / 2); t.b = t.a + sz(t.v);
       // l'utile esce dalla parte alta dell'incasso totale e va dritto a destra; i costi stanno sotto, così le bande non si incrociano
       const u = cols[4][0]; if (u) { u.a = t.a; u.b = u.a + sz(u.v); }
