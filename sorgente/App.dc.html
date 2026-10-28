@@ -1564,7 +1564,7 @@
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div style="display:flex;flex-direction:column"><span style="font-size:13px;color:#544c45">Impostazioni</span><span style="font-size:24px;font-weight:800;letter-spacing:-.02em">Vendite dalla cassa</span></div><button onClick="{{ closeSales }}" aria-label="Chiudi" style="width:44px;height:44px;border:0;background:transparent;color:#1d1f20;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
       <p style="margin:0;font-size:14px;line-height:1.45;color:#3d3732;text-wrap:pretty">{{ salesSay }}</p>
       <span style="font-size:14px;font-weight:600">{{ salesInfo }}</span>
-      <sc-if value="{{ salesPick }}" hint-placeholder-val="{{ true }}"><label style="align-self:flex-start;display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border:2px solid #1d1f20;border-radius:14px;background:#ffc53d;box-shadow:3px 3px 0 #1d1f20;font-weight:800;font-size:15px;cursor:pointer"><input type="file" multiple accept=".csv,.txt,text/csv" onChange="{{ pickSales }}" style="display:none">Scegli i file CSV</label></sc-if>
+      <sc-if value="{{ salesPick }}" hint-placeholder-val="{{ true }}"><label style="align-self:flex-start;display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border:2px solid #1d1f20;border-radius:14px;background:#ffc53d;box-shadow:3px 3px 0 #1d1f20;font-weight:800;font-size:15px;cursor:pointer"><input type="file" multiple accept=".csv,.txt,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange="{{ pickSales }}" style="display:none">Scegli il file (Excel o CSV)</label></sc-if>
       <sc-if value="{{ salesMapOn }}" hint-placeholder-val="{{ false }}">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
           <sc-for list="{{ salesCols }}" as="c" hint-placeholder-count="3"><label style="display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700">{{ c.label }}<select value="{{ c.v }}" onChange="{{ c.set }}" style="font:inherit;font-size:15px;min-height:44px;padding:0 10px;border:1.5px solid #d9ccb8;border-radius:10px;background:#fff;color:#1d1f20"><sc-for list="{{ c.opts }}" as="o"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label></sc-for>
@@ -1574,6 +1574,19 @@
           <sc-for list="{{ salesProds }}" as="p" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);gap:8px;align-items:center;font-size:14px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.name }}</span><span style="text-align:right;font-variant-numeric:tabular-nums;color:#544c45">{{ p.qL }}</span><select value="{{ p.v }}" onChange="{{ p.set }}" aria-label="Piatto corrispondente" style="font:inherit;font-size:14px;min-height:40px;padding:0 8px;border:1.5px solid #d9ccb8;border-radius:10px;background:#fff;color:#1d1f20;min-width:0"><sc-for list="{{ p.opts }}" as="o"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></div></sc-for>
         </div>
         <button onClick="{{ salesGo }}" disabled="{{ salesCant }}" style="min-height:52px;font:inherit;font-size:16px;font-weight:800;color:#fff;background:#1a7a43;border:2px solid #1d1f20;border-radius:14px;box-shadow:3px 3px 0 #1d1f20;cursor:pointer">{{ salesGoL }}</button>
+      </sc-if>
+      <sc-if value="{{ salesCatsOn }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size:14px;font-weight:700;line-height:1.45;text-wrap:pretty">{{ salesCatsL }}</span>
+        <div style="display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto;border-top:1px solid #d9ccb8;padding-top:10px">
+          <sc-for list="{{ salesCatList }}" as="k" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,170px);gap:8px;align-items:center;font-size:14px"><span style="min-width:0;overflow-wrap:anywhere"><b>{{ k.nome }}</b> <span style="color:#544c45;font-variant-numeric:tabular-nums">· {{ k.info }}</span></span><select value="{{ k.v }}" onChange="{{ k.set }}" aria-label="{{ k.aria }}" style="font:inherit;font-size:14px;min-height:44px;padding:0 8px;border:1.5px solid #d9ccb8;border-radius:10px;background:#fff;color:#1d1f20;min-width:0"><sc-for list="{{ k.opts }}" as="o"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></div></sc-for>
+        </div>
+        <button onClick="{{ salesCatsGo }}" style="min-height:52px;font:inherit;font-size:16px;font-weight:800;color:#fff;background:#1a7a43;border:2px solid #1d1f20;border-radius:14px;box-shadow:3px 3px 0 #1d1f20;cursor:pointer">Avanti</button>
+      </sc-if>
+      <sc-if value="{{ salesDoneOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;border-top:1px solid #d9ccb8">
+          <sc-for list="{{ salesDone }}" as="r" hint-placeholder-count="7"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-size:15px;padding:8px 0;border-bottom:1px solid #d9ccb8"><span style="color:#3d3732">{{ r.l }}</span><b style="font-variant-numeric:tabular-nums">{{ r.v }}</b></div></sc-for>
+        </div>
+        <button onClick="{{ closeSales }}" style="min-height:52px;font:inherit;font-size:16px;font-weight:800;color:#fff;background:#1a7a43;border:2px solid #1d1f20;border-radius:14px;box-shadow:3px 3px 0 #1d1f20;cursor:pointer">Fatto</button>
       </sc-if>
       <span role="alert" style="font-size:14px;font-weight:700;color:#a3251b">{{ salesMsg }}</span>
     </div>
@@ -1988,6 +2001,96 @@ class Component extends DCLogic {
   }
   // numeri all'italiana (1.234,5) o all'inglese (1234.5)
   static parseNum(s) { let x = String(s ?? '').replace(/[\s€]/g, ''); if (x.includes(',')) x = x.replace(/\./g, '').replace(',', '.'); const v = parseFloat(x); return isFinite(v) ? v : NaN; }
+  // file .xlsx (Excel): primo foglio letto senza librerie (zip + XML); righe di stringhe come parseCsv
+  static async readXlsx(buf) {
+    const u8 = buf instanceof Uint8Array ? buf : new Uint8Array(buf), dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength), td = new TextDecoder();
+    let e = u8.length - 22; while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+    if (e < 0) throw new Error('Il file non è un .xlsx valido');
+    const files = {}; let p = dv.getUint32(e + 16, true);
+    for (let i = 0, n = dv.getUint16(e + 10, true); i < n; i++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) break;
+      const nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true);
+      files[td.decode(u8.subarray(p + 46, p + 46 + nl))] = { method: dv.getUint16(p + 10, true), size: dv.getUint32(p + 20, true), off: dv.getUint32(p + 42, true) };
+      p += 46 + nl + xl + cl;
+    }
+    const read = async name => {
+      const f = files[name]; if (!f) return '';
+      const st = f.off + 30 + dv.getUint16(f.off + 26, true) + dv.getUint16(f.off + 28, true), data = u8.slice(st, st + f.size);
+      if (f.method === 0) return td.decode(data);
+      if (f.method !== 8) throw new Error('Compressione del file non supportata');
+      return td.decode(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    };
+    const unesc = s => s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (m, c) => c[0] === '#' ? String.fromCodePoint(c[1].toLowerCase() === 'x' ? parseInt(c.slice(2), 16) : +c.slice(1)) : ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[c.toLowerCase()]);
+    const attr = (tag, a) => { const m = tag.match(new RegExp('\\s' + a + '="([^"]*)"')); return m ? m[1] : ''; };
+    // primo foglio: dal workbook e dalle sue relazioni
+    let sheet = 'xl/worksheets/sheet1.xml';
+    const wb = await read('xl/workbook.xml'), rels = await read('xl/_rels/workbook.xml.rels'), s0 = wb.match(/<sheet\b[^>]*>/);
+    if (s0) { const rid = attr(s0[0], 'r:id'), rel = (rels.match(/<Relationship\b[^>]*>/g) || []).find(r => attr(r, 'Id') === rid); if (rel) { const t = attr(rel, 'Target'); sheet = t.startsWith('/') ? t.slice(1) : 'xl/' + t.replace(/^\.\//, ''); } }
+    const sst = (await read('xl/sharedStrings.xml')).split(/<si>|<si\s[^>]*>/).slice(1).map(si => unesc((si.match(/<t(?:\s[^>]*)?>[\s\S]*?<\/t>/g) || []).map(t => t.replace(/<t(?:\s[^>]*)?>|<\/t>/g, '')).join('')));
+    const col = r => { let n = 0; for (const ch of r.replace(/\d+$/, '')) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
+    const out = [];
+    for (const rm of (await read(sheet)).matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>|<row\b[^>]*\/>/g)) {
+      const row = [];
+      for (const cm of (rm[1] || '').matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+        const a = ' ' + cm[1], ref = attr(a, 'r'), t = attr(a, 't'), body = cm[2] || '';
+        let v = '';
+        if (t === 'inlineStr') v = unesc((body.match(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g) || []).map(x => x.replace(/<t(?:\s[^>]*)?>|<\/t>/g, '')).join(''));
+        else { const vm = body.match(/<v>([\s\S]*?)<\/v>/); v = vm ? unesc(vm[1]) : ''; if (t === 's') v = sst[+v] ?? ''; }
+        const i = ref ? col(ref) : row.length; while (row.length < i) row.push(''); row[i] = v;
+      }
+      out.push(row);
+    }
+    return out;
+  }
+  // Tilby, export "Righe di vendita"
+  // tilbyKey: chiave di un nome prodotto (maiuscole, accenti, apostrofi tipografici, spazi doppi non contano).
+  static tilbyKey(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[‘’‛`´]/g, "'").toLowerCase().replace(/\s+/g, ' ').trim(); }
+  // categorie proposte come "altre vendite" (il resto sono piatti); si confermano una volta per pizzeria
+  static TILBY_ALTRE = ['Bibite', 'Birre', 'Bollicine', 'Liquori', 'Vini Rossi', 'Vini Bianchi', 'Drink', 'COPERTO'];
+  // È l'export "Righe di vendita"? (intestazione in italiano con Ricavi, Documento, % IVA)
+  static isTilbyRighe(head) { const h = (head || []).map(x => String(x || '').trim().toLowerCase()); return ['data', 'nome', 'categoria', '% iva', 'documento', 'quantità', 'ricavi'].every(k => h.includes(k)); }
+  // legge le righe: niente Cliente né Nome venditore (dati personali che non servono). dayEnd: ore dopo mezzanotte che contano sul giorno prima.
+  static tilbyRighe(rows, dayEnd) {
+    const h = (rows[0] || []).map(x => String(x || '').trim().toLowerCase()), I = n => h.indexOf(n);
+    const c = { data: I('data'), vendita: I('vendita'), nome: I('nome'), cat: I('categoria'), iva: I('% iva'), doc: I('documento'), qty: I('quantità'), ricavi: I('ricavi'), nota: I('note di riga'), sala: I('nome sala'), tavolo: I('nome tavolo'), tipo: I('tipo ordine') };
+    const num = s => { let x = String(s ?? '').replace(/[\s€]/g, ''); if (!x) return 0; if (x.includes(',')) x = x.replace(/\./g, '').replace(',', '.'); const v = parseFloat(x); return isFinite(v) ? v : NaN; };
+    const iso = (y, m, d) => y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    const giorno = s => {
+      s = String(s || '').trim(); let y, mo, d, hh = 12;
+      let m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
+      if (m) { d = +m[1]; mo = +m[2]; y = +m[3]; if (m[4] != null) hh = +m[4]; }
+      else if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2}))?/))) { y = +m[1]; mo = +m[2]; d = +m[3]; if (m[4] != null) hh = +m[4]; }
+      else if (/^\d+(\.\d+)?$/.test(s)) { const ms = Math.round((parseFloat(s) - 25569) * 864e5), t = new Date(ms); y = t.getUTCFullYear(); mo = t.getUTCMonth() + 1; d = t.getUTCDate(); hh = t.getUTCHours(); }
+      else return null;
+      if (hh < (+dayEnd || 0)) { const t = new Date(Date.UTC(y, mo - 1, d - 1)); return iso(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()); }
+      return iso(y, mo, d);
+    };
+    const out = [], bad = [];
+    rows.slice(1).forEach((r, k) => {
+      if (!r || !r.some(v => String(v || '').trim())) return;
+      const d = giorno(r[c.data]), name = String(r[c.nome] || '').trim(), gross = num(r[c.ricavi]), qty = num(r[c.qty]), iva = num(r[c.iva]);
+      if (!d || !name || !isFinite(gross) || !isFinite(qty)) { bad.push(k + 2); return; }
+      const sala = c.sala >= 0 ? String(r[c.sala] || '').trim() : '', tav = c.tavolo >= 0 ? String(r[c.tavolo] || '').trim() : '', tipo = c.tipo >= 0 ? String(r[c.tipo] || '').trim().toLowerCase() : '';
+      out.push({ d, name, key: Component.tilbyKey(name), cat: String(r[c.cat] || '').trim(), iva: isFinite(iva) ? iva : 0, gross, net: gross / (1 + (isFinite(iva) ? iva : 0) / 100), qty, doc: String(r[c.doc] || '').trim(), vendita: c.vendita >= 0 ? String(r[c.vendita] || '').trim() : '', nota: c.nota >= 0 ? String(r[c.nota] || '').trim() : '', banco: (!sala && !tav) || tipo === 'take_away' });
+    });
+    return { righe: out, bad };
+  }
+  // riepilogo di un insieme di righe: incasso lordo e netto per giorno, annulli/resi, coperti, banco, piatti per nome
+  static tilbyRiepilogo(righe, altre) {
+    const A = new Set((altre || Component.TILBY_ALTRE).map(Component.tilbyKey)), r2 = v => Math.round(v * 100) / 100;
+    const giorni = {}, cats = {}, piatti = {}, nomiPrima = new Set();
+    let lordo = 0, netto = 0, annulli = 0, coperti = 0, bancoN = 0, bancoL = 0;
+    righe.forEach(x => {
+      lordo += x.gross; netto += x.net;
+      if (x.doc === 'void_doc' || x.doc === 'refund_doc') annulli += x.gross;
+      const g = giorni[x.d] = giorni[x.d] || { lordo: 0, netto: 0 }; g.lordo += x.gross; g.netto += x.net;
+      const ck = x.cat || '—', cc = cats[ck] = cats[ck] || { lordo: 0, qty: 0 }; cc.lordo += x.gross; cc.qty += x.qty;
+      if (Component.tilbyKey(x.cat) === 'coperto' || x.key === 'coperto') coperti += x.qty;
+      if (x.banco) { bancoN++; bancoL += x.gross; }
+      if (!A.has(Component.tilbyKey(x.cat))) { nomiPrima.add(x.name); const p = piatti[x.key] = piatti[x.key] || { nome: x.name, qty: 0, lordo: 0, cat: x.cat }; p.qty += x.qty; p.lordo += x.gross; }
+    });
+    return { lordo: r2(lordo), netto: r2(netto), annulli: r2(annulli), coperti: r2(coperti), giorni: Object.keys(giorni).length, perGiorno: giorni, banco: { righe: bancoN, lordo: r2(bancoL) }, categorie: cats, piatti, nomiPrima: nomiPrima.size };
+  }
   // date AAAA-MM-GG oppure GG/MM/AAAA (anche con - o . e anno a due cifre), con o senza ora
   static parseDay(s) {
     const t = String(s || '').trim(); let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
@@ -2149,7 +2252,7 @@ class Component extends DCLogic {
   clearData() {
     clearTimeout(this._pt); this._pt = null; this._pulled = false; this._cloudSaved = {}; this._mem = {}; this._rid = null; this._role = null; this._ver = {}; this._remoteW = null; this._noCost = null; this._sig = null; this._recRef = null; this._qn = 0;
     const old = this.state.archView; if (old && old.url) URL.revokeObjectURL(old.url);
-    this.setState({ ingredients: undefined, pizzas: undefined, menuArch: undefined, menuArchDlg: null, orders: undefined, ordEd: null, waste: undefined, fixed: undefined, docs: undefined, priceLog: undefined, suppliers: undefined, articles: undefined, wasteReasons: undefined, income: undefined, targetFc: undefined, priceThr: undefined, dough: undefined, doughG: undefined, salesMap: undefined, closedDays: undefined, sales: undefined, doughDlg: false, salesDlg: null, askDlg: null, pzForm: null, ingForm: null, peopleDlg: null, riepOn: false, pwDlg: null, menuImp: null, remDlg: null, remOn: false, pzSwitch: false, mems: null, cacheMode: false, wf: undefined, ddt: null, archView: null, toast: null, ingView: null, selPizza: null, ready: false, demo: false, migr: null, dataDlg: false, profOpen: false, wrDlg: false, screen: null, pendingN: 0, loadErr: null, rid: null, role: null, rname: null, rlogo: null, pzDlg: null, outQ: null });
+    this.setState({ ingredients: undefined, pizzas: undefined, menuArch: undefined, menuArchDlg: null, orders: undefined, ordEd: null, waste: undefined, fixed: undefined, docs: undefined, priceLog: undefined, suppliers: undefined, articles: undefined, wasteReasons: undefined, income: undefined, targetFc: undefined, priceThr: undefined, dough: undefined, doughG: undefined, salesMap: undefined, closedDays: undefined, salesCats: undefined, sales: undefined, doughDlg: false, salesDlg: null, askDlg: null, pzForm: null, ingForm: null, peopleDlg: null, riepOn: false, pwDlg: null, menuImp: null, remDlg: null, remOn: false, pzSwitch: false, mems: null, cacheMode: false, wf: undefined, ddt: null, archView: null, toast: null, ingView: null, selPizza: null, ready: false, demo: false, migr: null, dataDlg: false, profOpen: false, wrDlg: false, screen: null, pendingN: 0, loadErr: null, rid: null, role: null, rname: null, rlogo: null, pzDlg: null, outQ: null });
   }
   wipeLocal() {
     [Component.KEY, 'artigiani-draft', 'artigiani-migr-asked', 'artigiani-session'].forEach(Component.lsDel);
@@ -2679,10 +2782,10 @@ class Component extends DCLogic {
       if (this._iconFor === url) link.setAttribute('href', cv.toDataURL('image/png'));
     } catch (e) {}
   }
-  settingsJ() { const s = this.state; return JSON.stringify({ targetFc: s.targetFc ?? null, priceThr: s.priceThr ?? null, dayEnd: s.dayEnd ?? null, dough: s.dough ?? null, doughG: s.doughG ?? null, salesMap: s.salesMap ?? null, closedDays: s.closedDays ?? null }); }
+  settingsJ() { const s = this.state; return JSON.stringify({ targetFc: s.targetFc ?? null, priceThr: s.priceThr ?? null, dayEnd: s.dayEnd ?? null, dough: s.dough ?? null, doughG: s.doughG ?? null, salesMap: s.salesMap ?? null, closedDays: s.closedDays ?? null, salesCats: s.salesCats ?? null }); }
   async fetchAll(c) {
     const rid = this._rid, q = '&ristorante_id=eq.' + rid, H = Component.H(c);
-    const U = { dati: 'dati?select=chiave,valore,versione', docs: c.table + '?select=data&order=id.asc', scarti: 'scarti?select=*&order=data.desc,creato_il.desc,client_id.asc', prezzi: 'storico_prezzi?select=*&order=data.asc,id.asc', causali: 'causali?select=*&order=ordine.asc', incassi: 'incassi?select=*', vendite: 'vendite?select=data,pizza_id,quantita&order=data.asc,pizza_id.asc' };
+    const U = { dati: 'dati?select=chiave,valore,versione&chiave=neq.venditeNote', docs: c.table + '?select=data&order=id.asc', scarti: 'scarti?select=*&order=data.desc,creato_il.desc,client_id.asc', prezzi: 'storico_prezzi?select=*&order=data.asc,id.asc', causali: 'causali?select=*&order=ordine.asc', incassi: 'incassi?select=*', vendite: 'vendite?select=data,pizza_id,quantita&order=data.asc,pizza_id.asc' };
     const PAGED = { docs: 1, scarti: 1, prezzi: 1, vendite: 1 }, K = Object.keys(U); let rs;
     const one = async k => { if (PAGED[k]) return this.getAll(c, U[k] + q); const r = await fetch(c.url + '/rest/v1/' + U[k] + q, { headers: H }); return r.ok ? { ok: true, rows: await r.json() } : { status: r.status }; };
     try { rs = await Promise.all(K.map(one)); } catch (e) { throw new Error('net'); }
@@ -2695,7 +2798,7 @@ class Component extends DCLogic {
     const up = { ingredients: [], pizzas: [], suppliers: [], articles: [], docs: Component.overlay(j.docs.map(x => x.data).filter(Boolean), this.dqGet()) }, have = new Set(), ver = {};
     j.dati.forEach(x => {
       if (Component.VKEYS.includes(x.chiave) && x.valore != null) { up[x.chiave] = x.valore; have.add(x.chiave); ver[x.chiave] = x.versione; }
-      else if (x.chiave === 'settings' && x.valore) { have.add('settings'); ver.settings = x.versione; if (x.valore.targetFc != null) up.targetFc = x.valore.targetFc; if (x.valore.priceThr != null) up.priceThr = x.valore.priceThr; if (x.valore.dayEnd != null) up.dayEnd = x.valore.dayEnd; ['dough', 'doughG', 'salesMap', 'closedDays'].forEach(k => { if (x.valore[k] != null) up[k] = x.valore[k]; }); }
+      else if (x.chiave === 'settings' && x.valore) { have.add('settings'); ver.settings = x.versione; if (x.valore.targetFc != null) up.targetFc = x.valore.targetFc; if (x.valore.priceThr != null) up.priceThr = x.valore.priceThr; if (x.valore.dayEnd != null) up.dayEnd = x.valore.dayEnd; ['dough', 'doughG', 'salesMap', 'closedDays', 'salesCats'].forEach(k => { if (x.valore[k] != null) up[k] = x.valore[k]; }); }
     });
     const wr = {}, rn = {};
     j.causali.forEach(r => { const m = Component.MODE_IN[r.modalita]; if (!m) return; const it = { id: r.id, label: r.nome }; if (r.nascosta) it.hidden = true; if (r.personalizzata) it.custom = true; (wr[m] = wr[m] || []).push(it); rn[r.id] = it; });
@@ -2781,7 +2884,7 @@ class Component extends DCLogic {
     const s = this.state, uid = Component.uidOf(this._sess);
     if (!uid || s.demo || s.cacheMode || !this._rid) return;
     const data = {};
-    ['ingredients', 'wasteReasons', 'priceLog', 'suppliers', 'articles', 'menuArch', 'orders', 'fixed', 'income', 'targetFc', 'priceThr', 'dayEnd', 'dough', 'doughG', 'salesMap', 'closedDays', 'docs', 'sales'].forEach(k => { if (s[k] !== undefined) data[k] = s[k]; });
+    ['ingredients', 'wasteReasons', 'priceLog', 'suppliers', 'articles', 'menuArch', 'orders', 'fixed', 'income', 'targetFc', 'priceThr', 'dayEnd', 'dough', 'doughG', 'salesMap', 'closedDays', 'salesCats', 'docs', 'sales'].forEach(k => { if (s[k] !== undefined) data[k] = s[k]; });
     data.pizzas = (s.pizzas || []).map(p => p.photo ? { ...p, photo: null } : p);
     data.waste = (s.waste || []).filter(w => this._remoteW && this._remoteW.has(w.id));
     Component.lsSet('artigiani-cache-' + uid, { rid: this._rid, role: this._role, rname: s.rname || '', rlogo: s.rlogo || '', at: Date.now(), data });
@@ -2918,7 +3021,7 @@ class Component extends DCLogic {
         await this.pullData();
         const merged = {}; let clash = 0;
         Object.keys(mine).forEach(k => { const r = Component.merge3(base[k], mine[k], this.state[k]); merged[k] = r.v; clash += r.clash; });
-        if (setMine) { const r = Component.merge3(JSON.parse(base.settings || '{}'), setMine, JSON.parse(this.settingsJ())); clash += r.clash; ['targetFc', 'priceThr', 'dayEnd', 'dough', 'doughG', 'salesMap', 'closedDays'].forEach(x => { merged[x] = r.v[x] ?? undefined; }); }
+        if (setMine) { const r = Component.merge3(JSON.parse(base.settings || '{}'), setMine, JSON.parse(this.settingsJ())); clash += r.clash; ['targetFc', 'priceThr', 'dayEnd', 'dough', 'doughG', 'salesMap', 'closedDays', 'salesCats'].forEach(x => { merged[x] = r.v[x] ?? undefined; }); }
         await new Promise(r => this.setState(merged, r));
         this.setState({ toast: { id: 'conf', info: true, wf: true, text: clash ? 'Un altro dispositivo ha cambiato gli stessi dati: ho tenuto le tue modifiche, controllale' : 'Le tue modifiche sono state unite a quelle di un altro dispositivo' } });
         clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 8000);
@@ -3013,12 +3116,13 @@ class Component extends DCLogic {
     const bad = m => this.setState(s => ({ salesDlg: { ...(s.salesDlg || {}), step: 'pick', msg: m } }));
     const sheets = [];
     for (const f of files) {
-      let text;
-      try { text = await f.text(); } catch (e) { return bad('Non riesco a leggere il file ' + f.name + '.'); }
-      const rows = Component.parseCsv(text);
-      if (rows.length < 2) return bad('Il file ' + f.name + ' è vuoto o non è un CSV: dalla cassa esporta le vendite in formato CSV.');
+      const isX = /\.xlsx$/i.test(f.name);
+      let rows;
+      try { rows = isX ? (await Component.readXlsx(await f.arrayBuffer())).filter(r => r.some(v => String(v).trim())).map(r => r.map(v => String(v).trim())) : Component.parseCsv(await f.text()); } catch (e) { return bad('Non riesco a leggere il file ' + f.name + (isX ? ': aprilo in Excel e salvalo di nuovo, oppure esportalo in CSV.' : '.')); }
+      if (rows.length < 2) return bad('Il file ' + f.name + ' è vuoto o non è un file di vendite: dalla cassa esporta le vendite in Excel o CSV.');
       sheets.push({ name: f.name, head: rows[0], rows: rows.slice(1) });
     }
+    if (sheets.length === 1 && Component.isTilbyRighe(sheets[0].head)) return this.salesRighe(sheets[0]);
     const fileName = sheets.map(s => s.name).join(', '), T = Component.tilby(sheets);
     if (T && T.err) return bad(T.err);
     if (!T) {
@@ -3032,6 +3136,47 @@ class Component extends DCLogic {
     // tutti i prodotti già conosciuti (o solo incassi): si importa subito, senza domande
     const plan = this.salesPlan(D);
     if (!plan.fresh.length) return this.salesImport(plan, D);
+  }
+  // Tilby "Righe di vendita": un file solo con piatti, bevande e coperto. Cliente e Nome venditore non si leggono.
+  // Le categorie si dividono una volta per pizzeria in piatti (si abbinano al menù) e altre vendite (contano solo nell'incasso).
+  salesRighe(sh) {
+    const T = Component.tilbyRighe([sh.head, ...sh.rows], Component._dayEnd), K = Component.tilbyKey;
+    if (!T.righe.length) return this.setState(s => ({ salesDlg: { ...(s.salesDlg || {}), step: 'pick', msg: 'Nel file non ho trovato righe leggibili: controlla di aver esportato «Righe di vendita».' } }));
+    const saved = this.state.salesCats || {}, altre = Component.TILBY_ALTRE.map(K), cats = {};
+    T.righe.forEach(x => { const k = K(x.cat), c = cats[k] = cats[k] || { nome: x.cat || 'Senza categoria', lordo: 0 }; c.lordo += x.gross; });
+    const catSel = {}; Object.keys(cats).forEach(k => { catSel[k] = saved[k] || (altre.includes(k) ? 'a' : 'p'); });
+    const D = { step: 'cats', fileName: sh.name, righe: T.righe, bad: T.bad.length, cats, catSel, map: {}, msg: '' };
+    if (Object.keys(cats).every(k => saved[k])) return this.salesRigheAvanti(D);
+    this.setState({ salesDlg: D });
+  }
+  salesRigheAvanti(D0) {
+    const D = D0 || this.state.salesDlg, K = Component.tilbyKey, A = new Set(Object.keys(D.catSel).filter(k => D.catSel[k] === 'a'));
+    const R = Component.tilbyRiepilogo(D.righe, [...A]), nome = {};
+    Object.entries(R.piatti).forEach(([k, p]) => { nome[k] = p.nome; });
+    // stesso piatto scritto in modi diversi (maiuscole, accenti, apostrofi): un nome solo
+    const parsed = D.righe.filter(x => !A.has(K(x.cat))).map(x => ({ d: x.d, name: nome[x.key] || x.name, q: x.qty }));
+    const inc = {}, net = {}, cop = {}, note = {};
+    Object.entries(R.perGiorno).forEach(([d, g]) => { inc[d] = g.lordo; net[d] = g.netto; });
+    D.righe.forEach(x => { if (K(x.cat) === 'coperto' || x.key === 'coperto') cop[x.d] = (cop[x.d] || 0) + x.qty; if (x.nota) (note[x.d] = note[x.d] || []).push({ v: x.vendita, p: x.name, t: x.nota }); });
+    const N = { ...D, step: 'map', parsed, inc, net, cop, note, simile: true, riep: { lordo: R.lordo, netto: R.netto, annulli: R.annulli, coperti: R.coperti, banco: R.banco, giorni: R.giorni, nNote: D.righe.filter(x => x.nota).length } };
+    this.setState({ salesDlg: N });
+    const plan = this.salesPlan(N);
+    if (!plan.fresh.length) return this.salesImport(plan, N);
+  }
+  // note di riga ("senza parmigiano", "falle tra 30 min"): si conservano per il titolare, non entrano nei conti
+  async salvaNoteVendite(c, note, from, to) {
+    const H = Component.H(c, { 'Content-Type': 'application/json' }), base = c.url + '/rest/v1/dati?ristorante_id=eq.' + this._rid + '&chiave=eq.venditeNote';
+    for (let i = 0; i < 3; i++) {
+      const g = await fetch(base + '&select=valore,versione', { headers: H }); if (!g.ok) return false;
+      const cur = (await g.json())[0], v = {};
+      Object.entries((cur && cur.valore) || {}).forEach(([d, x]) => { if (d < from || d > to) v[d] = x; });
+      Object.assign(v, note);
+      const r = cur ? await fetch(base + '&versione=eq.' + cur.versione, { method: 'PATCH', headers: { ...H, Prefer: 'return=representation' }, body: JSON.stringify({ valore: v, versione: cur.versione + 1 }) })
+        : await fetch(c.url + '/rest/v1/dati', { method: 'POST', headers: { ...H, Prefer: 'return=representation' }, body: JSON.stringify({ ristorante_id: this._rid, chiave: 'venditeNote', valore: v, versione: 1 }) });
+      const out = r.ok ? await r.json().catch(() => []) : [];
+      if (Array.isArray(out) && out.length) return true;
+    }
+    return false;
   }
   // file esportati da Tilby: gli scontrini (una riga per vendita, con il totale) danno gli incassi;
   // le righe di vendita (i prodotti di ogni scontrino) danno il venduto
@@ -3089,7 +3234,7 @@ class Component extends DCLogic {
     parsed.forEach(x => { if (!from || x.d < from) from = x.d; if (!to || x.d > to) to = x.d; const nm = Component.rifacimentoDi(x.name) || x.name; prods[nm] = (prods[nm] || 0) + x.q; });
     const saved = S.salesMap || {}, pzN = (S.pizzas || []).map(p => ({ id: p.id, k: N(p.name) })), ids = new Set((S.pizzas || []).map(p => p.id));
     const known = name => { const k = N(name); return !!(saved[k] && (saved[k] === '__skip' || ids.has(saved[k]))) || pzN.some(p => p.k === k); };
-    const auto = name => { const k = N(name); if (saved[k] && (saved[k] === '__skip' || ids.has(saved[k]))) return saved[k]; const ex = pzN.find(p => p.k === k); if (ex) return ex.id; const inc = pzN.filter(p => p.k.length >= 4 && k.includes(p.k)).sort((a, b) => b.k.length - a.k.length)[0]; return inc ? inc.id : '__skip'; };
+    const auto = name => { const k = N(name); if (saved[k] && (saved[k] === '__skip' || ids.has(saved[k]))) return saved[k]; const ex = pzN.find(p => p.k === k); if (ex) return ex.id; const inc = pzN.filter(p => p.k.length >= 4 && k.includes(p.k)).sort((a, b) => b.k.length - a.k.length)[0]; if (inc) return inc.id; if (D.simile) { const b = pzN.map(p => ({ id: p.id, s: Component.dice(p.k, k) })).sort((x, y) => y.s - x.s)[0]; if (b && b.s >= 0.5) return b.id; } return '__skip'; };
     const pick = name => (D.map || {})[N(name)] ?? auto(name);
     const agg = {}, map = {}; let nPz = 0;
     const rifA = {};
@@ -3109,16 +3254,21 @@ class Component extends DCLogic {
     // incassi dagli scontrini: un valore al giorno (con IVA), anche zero per i giorni chiusi
     const iD = inc ? Object.keys(inc).sort() : [], iFrom = iD[0], iTo = iD[iD.length - 1];
     const incRows = iFrom ? Component.daysBetween(iFrom, iTo).map(d => ({ data: d, pizza_id: '__incasso', quantita: Math.max(0, Math.round((inc[d] || 0) * 100) / 100) })) : [];
+    // file Righe di vendita: anche l'incasso senza IVA (aliquote vere riga per riga) e i coperti del giorno
+    if (iFrom && D.net) Component.daysBetween(iFrom, iTo).forEach(d => incRows.push({ data: d, pizza_id: '__netto', quantita: Math.max(0, Math.round((D.net[d] || 0) * 100) / 100) }));
+    if (D.cop) days.forEach(d => { if (D.cop[d] > 0) rows.push({ data: d, pizza_id: '__coperti', quantita: Math.round(D.cop[d] * 1000) / 1000 }); });
     if (!rows.length && !incRows.length) return this.setState(s => ({ salesDlg: { ...(s.salesDlg || {}), step: 'pick', msg: 'Nel file non ho trovato vendite da importare.' } }));
     const fd = d => d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4), gg = n => n + (n === 1 ? ' giorno' : ' giorni');
     const parts = []; if (days.length) parts.push('venduto di ' + gg(days.length) + ', dal ' + fd(from) + ' al ' + fd(to)); if (incRows.length) parts.push('incassi di ' + gg(incRows.length) + ', dal ' + fd(iFrom) + ' al ' + fd(iTo));
-    const keep = r => r.pizza_id === '__incasso' ? !(incRows.length && r.data >= iFrom && r.data <= iTo) : !(days.length && r.data >= from && r.data <= to);
+    const keep = r => r.pizza_id === '__incasso' || r.pizza_id === '__netto' ? !(incRows.length && r.data >= iFrom && r.data <= iTo) : !(days.length && r.data >= from && r.data <= to);
     // rifacimenti: scarti del piatto con un codice fisso, così reimportare lo stesso file non li raddoppia
     const by = Component.uidOf(this._sess), had = new Set((this.state.waste || []).map(w => w.id)), rw = Component.rifacimentiScarti(rif, this.state.pizzas, this._rid).filter(w => !had.has(w.id)).map(w => ({ ...w, by }));
     if (rw.length) parts.push(rw.reduce((a, w) => a + w.n, 0) + ' rifacimenti come scarti');
+    let notesOk = null;
     const done = () => {
       if (!this.state.demo) rw.forEach(w => this.enqueue(w));
-      this.setState(s => ({ waste: [...rw, ...(s.waste || [])], sales: [...(s.sales || []).filter(keep), ...rows, ...incRows], salesMap: { ...(s.salesMap || {}), ...(map || {}) }, salesDlg: null, toast: { id: 'sales', info: true, wf: true, text: 'Importati: ' + parts.join(' e ') } }));
+      const fine = D.riep ? { step: 'done', done: this.salesRiepilogo(D, from, to, notesOk) } : null;
+      this.setState(s => ({ waste: [...rw, ...(s.waste || [])], sales: [...(s.sales || []).filter(keep), ...rows, ...incRows], salesMap: { ...(s.salesMap || {}), ...(map || {}) }, ...(D.catSel ? { salesCats: { ...(s.salesCats || {}), ...D.catSel } } : {}), salesDlg: fine, toast: { id: 'sales', info: true, wf: true, text: 'Importati: ' + parts.join(' e ') } }));
       clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 6000);
     };
     if (this.state.demo) return done();
@@ -3128,8 +3278,8 @@ class Component extends DCLogic {
     if (!c || !this._rid) return failMsg('Nessuna connessione: collegati a internet per importare le vendite.');
     const H = Component.H(c, { 'Content-Type': 'application/json' }), rid = this._rid;
     const steps = [];
-    if (rows.length) steps.push(['&data=gte.' + from + '&data=lte.' + to + '&pizza_id=neq.__incasso', rows]);
-    if (incRows.length) steps.push(['&data=gte.' + iFrom + '&data=lte.' + iTo + '&pizza_id=eq.__incasso', incRows]);
+    if (rows.length) steps.push(['&data=gte.' + from + '&data=lte.' + to + '&pizza_id=not.in.(__incasso,__netto)', rows]);
+    if (incRows.length) steps.push(['&data=gte.' + iFrom + '&data=lte.' + iTo + '&pizza_id=in.(__incasso,__netto)', incRows]);
     try {
       for (const [q, list] of steps) {
         let r = await fetch(c.url + '/rest/v1/vendite?ristorante_id=eq.' + rid + q, { method: 'DELETE', headers: { ...H, Prefer: 'return=minimal' } });
@@ -3142,7 +3292,24 @@ class Component extends DCLogic {
         }
       }
     } catch (e) { return failMsg('Nessuna connessione: riprova.'); }
+    if (D.note && from) { try { notesOk = await this.salvaNoteVendite(c, D.note, from, to); } catch (e) { notesOk = false; } }
     done();
+  }
+  // riepilogo dopo l'import del file Righe di vendita: i numeri del file, per controllarli con la cassa
+  salesRiepilogo(D, from, to, notesOk) {
+    const R = D.riep, e2 = v => (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: 'always' }) + ' €', fd = d => d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4);
+    const nPz = (D.parsed || []).reduce((a, x) => a + x.q, 0), out = [
+      { l: 'Giorni con vendite', v: R.giorni + (from ? ' · dal ' + fd(from) + ' al ' + fd(to) : '') },
+      { l: 'Incasso con IVA', v: e2(R.lordo) },
+      { l: 'Incasso senza IVA', v: e2(R.netto) },
+      { l: 'Di cui annulli e resi', v: e2(R.annulli) },
+      { l: 'Piatti venduti', v: String(Math.round(nPz * 100) / 100).replace('.', ',') },
+      { l: 'Coperti', v: String(Math.round(R.coperti)) },
+      { l: 'Al banco o da asporto', v: R.banco.righe + (R.banco.righe === 1 ? ' riga · ' : ' righe · ') + e2(R.banco.lordo) }
+    ];
+    if (R.nNote) out.push({ l: 'Note di riga', v: R.nNote + (notesOk === false ? ' · non salvate, riprova' : this.state.demo ? ' · non salvate nella prova' : ' · salvate, fuori dai conti') });
+    if (D.bad) out.push({ l: 'Righe non leggibili', v: String(D.bad) });
+    return out;
   }
   // pizze e ingredienti creati a mano: un cliente nuovo parte senza menù né listino
   savePizzaForm() {
@@ -4068,8 +4235,8 @@ class Component extends DCLogic {
 
     // vendite: quelle importate dalla cassa nei giorni che ci sono, la stima settimanale (sold / 7) negli altri
     const salesBy = {};
-    const salesCov = new Set(), incBy = {};
-    (S.sales || []).forEach(r => { if (r.pizza_id === '__incasso') { incBy[r.data] = (incBy[r.data] || 0) + (+r.quantita || 0); return; } if (r.pizza_id === '__giorno') salesCov.add(r.data); const d = salesBy[r.data] = salesBy[r.data] || {}; d[r.pizza_id] = (d[r.pizza_id] || 0) + (+r.quantita || 0); });
+    const salesCov = new Set(), incBy = {}, netBy = {};
+    (S.sales || []).forEach(r => { if (r.pizza_id === '__incasso') { incBy[r.data] = (incBy[r.data] || 0) + (+r.quantita || 0); return; } if (r.pizza_id === '__netto') { netBy[r.data] = (netBy[r.data] || 0) + (+r.quantita || 0); return; } if (r.pizza_id === '__coperti') return; if (r.pizza_id === '__giorno') salesCov.add(r.data); const d = salesBy[r.data] = salesBy[r.data] || {}; d[r.pizza_id] = (d[r.pizza_id] || 0) + (+r.quantita || 0); });
     const soldIn = (p, days) => days.reduce((a, d) => a + (salesCov.has(d) ? (salesBy[d][p.id] || 0) : (+p.sold || 0) / 7), 0);
     const covIn = days => days.filter(d => salesCov.has(d)).length;
     const wDays = Component.daysTo(Component.TODAY, 7);
@@ -4221,7 +4388,7 @@ class Component extends DCLogic {
     const incFor = (days, key) => {
       const x = (S.income || {})[key] || {}, tot = parseFloat(x.tot), pcM = parseFloat(x.pct), dIn = days.filter(d => incBy[d] != null);
       if (dIn.length) {
-        const menu = ds => pz.reduce((a, p) => a + p.net * soldIn(p, ds), 0), mCov = menu(dIn), mAll = menu(days), netCov = dIn.reduce((a, d) => a + incBy[d], 0) / (1 + vat);
+        const menu = ds => pz.reduce((a, p) => a + p.net * soldIn(p, ds), 0), mCov = menu(dIn), mAll = menu(days), netCov = dIn.reduce((a, d) => a + (netBy[d] != null ? netBy[d] : incBy[d] / (1 + vat)), 0);
         const other = mCov > 0 ? (netCov - mCov) * mAll / mCov : (netCov - mCov) * days.length / dIn.length;
         return { tot: mAll + other, pc: pcOk(pcM) ? pcM : pctLast != null ? pctLast : 30, pcGuess: !pcOk(pcM) && pctLast == null, auto: true, nIn: dIn.length, n: days.length };
       }
@@ -4820,9 +4987,14 @@ class Component extends DCLogic {
           ...(() => {
             const D = S.salesDlg || {}, cov = [...new Set((S.sales || []).filter(r => r.pizza_id === '__giorno').map(r => r.data))].sort(), covI = [...new Set((S.sales || []).filter(r => r.pizza_id === '__incasso').map(r => r.data))].sort();
             const rng = (l, a) => l + ' di ' + a.length + (a.length === 1 ? ' giorno' : ' giorni') + ', dal ' + fmtFull(a[0]) + ' al ' + fmtFull(a[a.length - 1]);
-            const base = { salesPick: D.step !== 'map', salesMapOn: D.step === 'map', salesMsg: D.msg || '', salesBusy: !!D.busy,
-              salesSay: 'Con Tilby scegli insieme i due file esportati: gli scontrini (per gli incassi) e le righe di vendita (per i piatti venduti). L’app li riconosce da sola; un prodotto nuovo te lo chiede una volta sola. I giorni dei file sostituiscono quelli già importati. Va bene anche il file di un’altra cassa, con data, prodotto e quantità.',
+            const base = { salesPick: !['map', 'cats', 'done'].includes(D.step), salesMapOn: D.step === 'map', salesMsg: D.msg || '', salesBusy: !!D.busy, salesCatsOn: D.step === 'cats', salesDoneOn: D.step === 'done', salesDone: D.done || [], salesCatList: [], salesCatsL: '', salesCatsGo: () => {},
+              salesSay: D.step === 'done' ? 'Vendite importate. Controlla i numeri con quelli della cassa.' : 'Con Tilby esporta «Righe di vendita» (Excel o CSV): dentro ci sono piatti, bevande, coperti e incassi. Cliente e venditore non vengono letti. Un prodotto nuovo te lo chiede una volta sola; i giorni del file sostituiscono quelli già importati. Va bene anche il file di un’altra cassa, con data, prodotto e quantità.',
               salesInfo: cov.length || covI.length ? 'Già importati: ' + [cov.length ? rng('venduto', cov) : '', covI.length ? rng('incassi', covI) : ''].filter(Boolean).join(' · ') + '.' : S.salesMissing ? 'Prima esegui lo script supabase-vendite.sql in Supabase.' : 'Ancora nessuna vendita importata: i conti usano le vendite stimate.' };
+            if (D.step === 'cats') {
+              const e2 = v => Math.round(v).toLocaleString('it-IT', { useGrouping: 'always' }) + ' €', opts = [{ v: 'p', l: 'Piatti' }, { v: 'a', l: 'Altre vendite' }];
+              const salesCatList = Object.entries(D.cats).sort((a, b) => b[1].lordo - a[1].lordo).map(([k, c]) => ({ nome: c.nome, info: e2(c.lordo), v: D.catSel[k], opts, aria: 'Categoria ' + c.nome, set: e => { const v = e.target.value; this.setState(s => ({ salesDlg: { ...s.salesDlg, catSel: { ...s.salesDlg.catSel, [k]: v } } })); } }));
+              return { ...base, salesCatList, salesCatsL: 'Quali categorie sono piatti? Gli altri incassi (bevande, vini, coperto) contano solo nell’incasso. Lo chiedo solo la prima volta.', salesCatsGo: () => this.salesRigheAvanti(), salesCols: [], salesProds: [], salesRangeL: '', salesGoL: '', salesCant: true, salesGo: () => {} };
+            }
             if (D.step !== 'map') return { ...base, salesCols: [], salesProds: [], salesRangeL: '', salesGoL: '', salesCant: true, salesGo: () => {} };
             const N = Component.norm, plan = this.salesPlan(D), { prods, from, to, nPz, bad, pick, known } = plan;
             const cols = D.cols, setCol = k => e => { const v = +e.target.value; this.setState(s => ({ salesDlg: { ...s.salesDlg, cols: { ...s.salesDlg.cols, [k]: v } } })); };
