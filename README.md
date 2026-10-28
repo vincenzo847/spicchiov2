@@ -126,13 +126,32 @@ All'importazione:
 Se nel menù ci sono già piatti, prima di scegliere il file bisogna scrivere «aggiungi nuovo menu». Prima di ogni caricamento il menù attuale viene copiato nell'**Archivio menu** (dati, chiave `menuArch`, solo titolare; ultime 12 versioni): lì si vedono i piatti di ogni versione e si può ripristinarne una scrivendo «ripristina menu». Anche il ripristino salva prima una copia del menù che sostituisce.
 
 ## Vendite dalla cassa (Tilby)
-In **Impostazioni › Vendite dalla cassa** il titolare sceglie insieme i due file esportati da Tilby:
+In **Impostazioni › Vendite dalla cassa** il titolare carica l'export Tilby **Righe di vendita** (Excel `.xlsx` o CSV). Basta questo file: contiene piatti, bevande, coperto e incassi.
+- Le colonne **Cliente** e **Nome venditore** non vengono lette né salvate: sono dati personali che non servono.
+- Incasso netto di ogni riga = Ricavi / (1 + % IVA / 100). Si sommano `commercial_doc` ed `e_invoice`; `void_doc` e `refund_doc` sono già negativi e si sommano così come sono. Le quantità possono avere decimali.
+- La prima volta l'app chiede quali **categorie** sono piatti e quali "altre vendite" (di base Bibite, Birre, Bollicine, Liquori, Vini Rossi, Vini Bianchi, Drink, COPERTO). La scelta resta nelle impostazioni della pizzeria (`salesCats`).
+- I nomi dei piatti si uniscono senza badare a maiuscole, accenti, apostrofi tipografici e spazi doppi. Un nome mai visto si chiede una volta, proponendo il piatto più simile del menù.
+- Per ogni giorno la tabella `vendite` riceve `__incasso` (con IVA), `__netto` (senza IVA, con l'aliquota vera di ogni riga: i Conti usano questo) e `__coperti` (quantità della riga COPERTO). Con un incasso dal file non serve scriverlo a mano.
+- Banco o asporto = righe senza sala né tavolo, oppure con tipo ordine `take_away`: compaiono nel riepilogo dopo l'import, insieme a incasso, annulli e coperti.
+- Le **note di riga** si salvano nella chiave `venditeNote` della tabella `dati` (solo il titolare la vede) e non entrano nei conti.
+- Come per gli scarti, le vendite fino alle 05:00 contano sulla sera prima.
+
+I test sull'export reale di una pizzeria non stanno in questo repository (dati privati). `test/tilby-righe.test.js` usa dati inventati.
+
+Funzionano ancora i due file CSV della versione precedente:
 - **scontrini** (una riga per vendita, con `final_amount` e `closed_at`): danno l'incasso di ogni giorno. Annulli e resi si compensano da soli, le righe doppie (stesso `uuid`) contano una volta, le vendite dopo mezzanotte vanno sul giorno prima (come gli scarti);
 - **righe di vendita** (i prodotti di ogni scontrino): danno i piatti venduti. La data viene dallo scontrino (`sale_id`); i prodotti delle vendite annullate per intero non contano.
 
 L'app li riconosce da sola, senza scegliere colonne. I nomi dei prodotti vengono abbinati ai piatti del menù; un nome mai visto viene chiesto una volta sola e poi ricordato. Gli incassi finiscono nella tabella `vendite` come righe `__incasso` (un valore al giorno, con IVA): Conti, Dashboard e riepilogo del mese li usano al posto dell'incasso scritto a mano, togliendo l'IVA del menù e stimando in proporzione i giorni non ancora importati. Il file di un'altra cassa funziona ancora scegliendo le colonne data, prodotto e quantità.
 
 Le righe con un prodotto che inizia con **"Rifacimento"** (es. "Rifacimento – Bufala e Latte") non sono vendite: diventano scarti del piatto intero con causale "Rifacimento". Il piatto si abbina come le vendite (un nome nuovo si chiede una volta); reimportare lo stesso file non li raddoppia.
+
+## Sezioni dell'app
+In **Impostazioni › Sezioni dell'app** il titolare accende o spegne **Scarti** (registra uno scarto, merce sparita, domanda della sera), **Ordini** e **Bolle (DDT)**. La scelta vale per tutta la pizzeria ed è salvata nelle impostazioni (`sezioni`). Una pizzeria nuova parte con tutte spente; la prova con dati di esempio le ha tutte accese.
+
+Una sezione spenta sparisce dal menù, dalla Dashboard, dai conteggi e da "Da fare", e non manda avvisi: il promemoria serale degli scarti parte solo se Scarti è accesa. I dati già inseriti restano. Con Bolle spenta, Acquisti parla solo di fatture: niente scheda "Bolle senza fattura", niente "DDT da fatturare" e niente filtro DDT/Fatture. Lo staff, con Scarti spenta, vede un messaggio al posto della sezione.
+
+"Da fare" mostra sempre le fatture scadute o in scadenza, gli aumenti di prezzo degli ingredienti e i piatti che rendono poco. Merce sparita compare solo con Scarti accesa. Bolle senza fattura, prezzi diversi dalle bolle e documenti dello staff da confermare compaiono solo con Bolle accesa.
 
 ## Merce sparita (Scarti)
 A fine serata non si pesa niente: si registrano a mano solo gli scarti occasionali (pizza bruciata, reso, merce caduta). La merce che manca la misura l'app per ogni ingrediente **fresco** (di base Caseificio, Ortofrutta, Ittico, Salumeria; si cambia nella scheda ingrediente):
