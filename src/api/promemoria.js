@@ -1,5 +1,6 @@
 // Promemoria a fine servizio: ogni sera manda una notifica ai dispositivi delle pizzerie
-// che oggi non hanno ancora registrato nessuno scarto.
+// che oggi non hanno ancora registrato nessuno scarto. Le pizzerie con la sezione Scarti spenta
+// (Impostazioni › Sezioni dell'app, spenta finché il titolare non la accende) non lo ricevono.
 // Parte da solo con i Cron Trigger di Cloudflare (vedi "triggers" in wrangler.jsonc).
 // Si può avviare a mano con POST /api/promemoria e l'header "Authorization: Bearer <CRON_SECRET>";
 // con ?prova=1 salta il controllo dell'ora.
@@ -27,7 +28,7 @@ export async function promemoria(env, { prova = false } = {}) {
   const ora = md >= 1015 || md <= 415 ? 22 : 23;
   if (!prova && +p.hour !== ora) return { status: 200, body: { oggi, fuori_orario: true, ora_italia: +p.hour, ora_promemoria: ora } };
 
-  const out = { oggi, pizzerie: 0, inviati: 0, saltate: 0, rimossi: 0, errori: 0 };
+  const out = { oggi, pizzerie: 0, inviati: 0, saltate: 0, spente: 0, rimossi: 0, errori: 0 };
   try {
     const r = await sb('/rest/v1/promemoria?select=endpoint,ristorante_id,p256dh,auth');
     if (!r.ok) return { status: 502, body: { error: 'Lettura dei dispositivi non riuscita (' + r.status + ')' } };
@@ -46,6 +47,10 @@ export async function promemoria(env, { prova = false } = {}) {
     };
     const pizzeria = async ([rid, list]) => {
       out.pizzerie++;
+      const s = await sb('/rest/v1/dati?select=valore&chiave=eq.settings&ristorante_id=eq.' + encodeURIComponent(rid));
+      if (!s.ok) { out.errori++; return; }
+      const set = ((await s.json())[0] || {}).valore || {};
+      if (!set.sezioni || set.sezioni.scarti !== true) { out.spente++; return; }
       const w = await sb('/rest/v1/scarti?select=client_id&limit=1&ristorante_id=eq.' + encodeURIComponent(rid) + '&data=eq.' + oggi);
       if (!w.ok) { out.errori++; return; }
       if ((await w.json()).length) { out.saltate++; return; }
