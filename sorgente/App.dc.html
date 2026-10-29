@@ -765,22 +765,18 @@
     <sc-if value="{{ isForn }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px 24px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 320px;min-width:0"><h2 style="margin:0;font-size:26px;line-height:1.1;letter-spacing:-.01em">Aumenti da tenere d’occhio</h2><span style="font-size:14px;color:#3b3b3b;text-wrap:pretty">Ordinati per quanto ti costano in più ogni mese, rispetto al prezzo medio degli ultimi 3 mesi.</span></div>
+          <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 320px;min-width:0"><h2 style="margin:0;font-size:26px;line-height:1.1;letter-spacing:-.01em">Aumenti da tenere d’occhio</h2><span style="font-size:14px;color:#3b3b3b;text-wrap:pretty">Prima quelli che ti costano di più ogni mese. Tocca una riga per vedere come è cambiato il prezzo.</span></div>
           <div style="display:flex;align-items:center;gap:10px"><span style="font-size:14px;white-space:nowrap">Avvisami sopra</span><button disabled="{{ ro }}" class="btn btn-secondary" onClick="{{ thrMinus }}" aria-label="Abbassa soglia" style="width:44px;height:44px;padding:0;border:2.5px solid #1a1a1a;border-radius:50%;background:#fff;box-shadow:3px 3px 0 #1a1a1a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button><span style="font-weight:800;font-size:28px;min-width:72px;text-align:center;font-variant-numeric:tabular-nums">{{ thrL }}</span><button disabled="{{ ro }}" class="btn btn-secondary" onClick="{{ thrPlus }}" aria-label="Alza soglia" style="width:44px;height:44px;padding:0;border:2.5px solid #1a1a1a;border-radius:50%;background:#fff;box-shadow:3px 3px 0 #1a1a1a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button></div>
         </div>
         <sc-if value="{{ hasPriceAlerts }}" hint-placeholder-val="{{ true }}">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:var(--space-6)">
-            <sc-for list="{{ priceCards }}" as="c" hint-placeholder-count="3">
-              <button onClick="{{ c.open }}" style="display:flex;flex-direction:column;align-items:stretch;line-height:1.35;gap:8px;padding:20px;text-align:left;font:inherit;color:inherit;cursor:pointer;border:2.5px solid #1a1a1a;border-radius:20px;background:#fff;box-shadow:5px 5px 0 #1a1a1a" style-hover="background:#fff6ea">
-                <span style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;width:100%"><span style="display:block;flex:1 1 auto;min-width:0;font-weight:800;font-size:22px;line-height:1.15;letter-spacing:-.015em;text-wrap:balance">{{ c.name }}</span><span style="flex:none;font-weight:800;font-size:14px;background:#d4352a;color:#fff6ea;border:2px solid #1a1a1a;border-radius:99px;padding:3px 10px;white-space:nowrap">{{ c.chgL }}</span></span>
-                <span style="display:block;font-size:14px;line-height:1.4;color:#3b3b3b">{{ c.fromTo }}</span>
-                <span style="display:block;font-weight:800;font-size:30px;line-height:1.1;letter-spacing:-.02em;color:#a3251b;font-variant-numeric:tabular-nums">{{ c.wkL }}</span>
-                <span style="font-size:13px;color:#3b3b3b;margin-top:-6px">{{ c.wkSub }}</span>
-                <sc-if value="{{ c.hasCross }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;font-weight:600;color:#a3251b">{{ c.crossL }}</span></sc-if>
-                <sc-if value="{{ c.hasCheap }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;background:#e3f3e9;border:2px solid #1a7a43;border-radius:12px;padding:6px 10px">{{ c.cheapL }}</span></sc-if>
-                <span style="font-size:14px;font-weight:800;margin-top:4px">Vedi andamento →</span>
+          <div style="border:2.5px solid #1a1a1a;border-radius:20px;background:#fff;box-shadow:5px 5px 0 #1a1a1a;overflow:hidden">
+            <sc-for list="{{ priceRows }}" as="c" hint-placeholder-count="5">
+              <button onClick="{{ c.open }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 14px;width:100%;padding:12px 18px;text-align:left;font:inherit;color:inherit;cursor:pointer;border:0;border-bottom:1px solid #e3d6c4;background:transparent" style-hover="background:#fff6ea">
+                <span style="min-width:0"><span style="display:block;font-weight:800;font-size:17px;line-height:1.2">{{ c.name }}</span><span style="display:block;font-size:13px;color:#544c45">{{ c.sub }}</span><sc-if value="{{ c.hasCheap }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-size:13px;font-weight:600;color:#1a7a43">{{ c.cheapL }}</span></sc-if></span>
+                <span style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-weight:800;font-size:18px;color:#a3251b;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right">{{ c.meseL }}</span><span style="font-weight:800;font-size:13px;background:#fde3df;color:#a3251b;border:1.5px solid #a3251b;border-radius:99px;padding:2px 9px;white-space:nowrap">{{ c.chgL }}</span></span>
               </button>
             </sc-for>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;background:#fff6ea"><span style="font-size:15px;font-weight:700">{{ alertTotL }}</span><sc-if value="{{ alertsMore }}" hint-placeholder-val="{{ true }}"><button onClick="{{ alertsToggle }}" style="font:inherit;font-size:14px;font-weight:800;min-height:40px;padding:0 16px;border:2px solid #1a1a1a;border-radius:99px;background:#fff;cursor:pointer;white-space:nowrap">{{ alertsMoreL }}</button></sc-if></div>
           </div>
         </sc-if>
         <sc-if value="{{ noPriceAlerts }}" hint-placeholder-val="{{ false }}">
@@ -5083,7 +5079,9 @@ class Component extends DCLogic {
     this.homeIconSync();
     const extra = {
       ...ingDetail, closeIng: () => this.setState({ ingView: null }),
-      priceCards, hasPriceAlerts: priceCards.length > 0, noPriceAlerts: !priceCards.length, thrL: '+' + thr + '%',
+      priceCards, priceRows: (S.alertsAll ? priceAlerts : priceAlerts.slice(0, 5)).map(x => ({ name: x.i.name, sub: (x.i.sup ? x.i.sup + ' · ' : '') + 'prima ' + eur(x.ref) + ' al kg', chgL: '+' + eur(x.i.price - x.ref) + ' / kg', meseL: '+' + eur0(x.wk * 30 / 7) + ' al mese', cheapL: x.cheaper ? 'Costa meno da ' + x.cheaper.sup + ': ' + eur(x.cheaper.price) : '', hasCheap: !!x.cheaper, open: () => this.setState({ ingView: x.i.id }) })),
+      alertTotL: (priceAlerts.length === 1 ? '1 aumento' : priceAlerts.length + ' aumenti') + ': in tutto +' + eur0(priceAlerts.reduce((a, x) => a + x.wk * 30 / 7, 0)) + ' al mese', alertsMore: priceAlerts.length > 5, alertsMoreL: S.alertsAll ? 'Mostra solo i primi 5' : 'Mostra tutti (' + priceAlerts.length + ')', alertsToggle: () => this.setState(s => ({ alertsAll: !s.alertsAll })),
+      hasPriceAlerts: priceCards.length > 0, noPriceAlerts: !priceCards.length, thrL: '+' + thr + '%',
       thrMinus: () => { const v = Math.max(1, thr - 1); this.setState({ priceThr: v }); },
       thrPlus: () => { const v = Math.min(30, thr + 1); this.setState({ priceThr: v }); },
       home, oggi, sc: scVals, bep: bepVals, contiDettOpen: !!S.contiDett, contiDettOpenS: S.contiDett ? 'true' : 'false', contiDettIcon: S.contiDett ? '−' : '+', contiDettToggle: () => this.setState(s => ({ contiDett: !s.contiDett })), pizzaChart, ...flowVals, ...contiVals, selPizzaChart, selParts, selChartSay,
