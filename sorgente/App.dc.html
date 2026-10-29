@@ -576,7 +576,7 @@
         <sc-if value="{{ quadSoliOn }}" hint-placeholder-val="{{ false }}"><p style="margin:0;max-width:720px;font-size:14px;line-height:1.45;color:var(--color-neutral-700);text-wrap:pretty">{{ quadSoliL }}</p></sc-if>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:var(--space-6);align-items:start">
           <sc-for list="{{ quads }}" as="q" hint-placeholder-count="4">
-            <div class="card" style="display:flex;flex-direction:column;border:2.5px solid #1a1a1a;border-top:10px solid {{ q.bar }};border-radius:20px;background:#fff;box-shadow:5px 5px 0 #1a1a1a;padding:22px;gap:8px">
+            <div class="card" style="display:flex;flex-direction:column;border:2.5px solid #1a1a1a;border-top:10px solid {{ q.bar }};border-radius:20px;background:{{ q.tint }};box-shadow:5px 5px 0 #1a1a1a;padding:22px;gap:8px">
               <span style="align-self:flex-start;font-size:15px;font-weight:800;padding:4px 12px;border:2px solid #1a1a1a;border-radius:99px;background:{{ q.bg }};color:{{ q.fg }}">{{ q.badge }}</span>
               <span style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1.1;">{{ q.title }}</span>
               <p style="margin:0;font-size:16px;line-height:1.5;color:#2b2724">{{ q.desc }}</p>
@@ -4347,8 +4347,8 @@ class Component extends DCLogic {
     const quadRuleL = 'Ogni piatto è confrontato solo con quelli del suo tipo (pizze con pizze, fritti con fritti…), sulle vendite delle ultime 4 settimane. High volume vuol dire che ne vendi più di quanto scritto qui sotto; high profit che ti lascia più di quella cifra a piatto, tolti IVA e ingredienti.';
     const quadSoglie = Component.KINDS.filter(([k]) => QD.soglie[k]).map(([k]) => { const s = QD.soglie[k]; return { kind: Component.KIND_CAT[k], pop: '> ' + (Math.ceil(s.pop) - 1) + ' vendute a settimana', mar: '> ' + eur(s.mar) + ' a piatto' }; });
     const quadSoliL = QD.soli.length ? (QD.soli.length === 1 ? QD.soli[0].p.name + ' non ha confronto: è l’unico del suo tipo.' : QD.soli.map(x => x.p.name).join(', ') + ' non hanno confronto: sono gli unici del loro tipo.') : '';
-    const QC = { 'Da tenere così': ['✓ Vanno bene così', '#1a7a43', '#fff', '#1a7a43'], 'Da riprezzare': ['↑ Alza il prezzo', '#d4352a', '#fff', '#d4352a'], 'Da spingere': ['★ Consigliali di più', '#ffc53d', '#1a1a1a', '#ffc53d'], 'Da rivedere': ['✕ Pensa se toglierli', '#efe6d8', '#1a1a1a', '#7f746a'] };
-    const qd = (kicker, title, desc, items) => ({ kicker, title, desc, items, empty: !items.length, badge: QC[kicker][0], bg: QC[kicker][1], fg: QC[kicker][2], bar: QC[kicker][3] });
+    const QC = { 'Da tenere così': ['✓ Vanno bene così', '#1a7a43', '#fff', '#1a7a43', '#eef8f1'], 'Da riprezzare': ['↑ Alza il prezzo', '#d4352a', '#fff', '#d4352a', '#fdf0ee'], 'Da spingere': ['★ Consigliali di più', '#ffc53d', '#1a1a1a', '#ffc53d', '#fff8e6'], 'Da rivedere': ['✕ Pensa se toglierli', '#efe6d8', '#1a1a1a', '#7f746a', '#f6f2ec'] };
+    const qd = (kicker, title, desc, items) => ({ kicker, title, desc, items, empty: !items.length, badge: QC[kicker][0], bg: QC[kicker][1], fg: QC[kicker][2], bar: QC[kicker][3], tint: QC[kicker][4] });
     const quadRows = [
       { label: 'Più vendute', quads: [
         qd('Da riprezzare', 'High volume · Low profit', 'Si vendono tanto ma ti lasciano poco: alza il prezzo o riduci le dosi.', q(true, false, true)),
