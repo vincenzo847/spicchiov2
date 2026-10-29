@@ -562,15 +562,23 @@
         </sc-for>
       </div>
       <sc-if value="{{ pzNone }}" hint-placeholder-val="{{ false }}"><div style="border:2px dashed #1a1a1a;border-radius:20px;padding:var(--space-8);text-align:center;font-size:16px">Nessun piatto trovato.</div></sc-if>
-      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
-        <h2 style="white-space:nowrap;margin:0;font-size:26px;line-height:1.1;letter-spacing:.04em">Consigli sul menù</h2>
-        <p style="margin:0;max-width:720px;font-size:16px;line-height:1.5;color:var(--color-neutral-700);text-wrap:pretty">{{ quadRuleL }}</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4);border-top:2px solid #1a1a1a;padding-top:var(--space-4)">
+        <button onClick="{{ quadToggle }}" aria-expanded="{{ quadOpen }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:6px 0;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer;text-align:left">
+          <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:800;font-size:20px;line-height:1.2">Consigli sul menù</span><span style="font-size:14px;color:var(--color-neutral-700)">{{ quadSumL }}</span></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:{{ quadChev }}"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+        <sc-if value="{{ quadOpen }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;max-width:720px;font-size:15px;line-height:1.5;color:var(--color-neutral-700);text-wrap:pretty">{{ quadRuleL }}</p>
+        <div style="max-width:520px;border:2px solid #1a1a1a;border-radius:14px;background:#fff;overflow:hidden">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;padding:8px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--color-neutral-700);background:#fff6ea"><span>Tipo</span><span style="text-align:right">High volume da</span><span style="text-align:right;min-width:96px">High profit da</span></div>
+          <sc-for list="{{ quadSoglie }}" as="g" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;padding:8px 14px;font-size:15px;border-top:1px solid #e3d6c4"><span style="font-weight:700">{{ g.kind }}</span><span style="text-align:right;font-variant-numeric:tabular-nums">{{ g.pop }}</span><span style="text-align:right;min-width:96px;font-variant-numeric:tabular-nums">{{ g.mar }}</span></div></sc-for>
+        </div>
         <sc-if value="{{ quadSoliOn }}" hint-placeholder-val="{{ false }}"><p style="margin:0;max-width:720px;font-size:14px;line-height:1.45;color:var(--color-neutral-700);text-wrap:pretty">{{ quadSoliL }}</p></sc-if>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:var(--space-6);align-items:start">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:var(--space-6);align-items:start">
           <sc-for list="{{ quads }}" as="q" hint-placeholder-count="4">
             <div class="card" style="display:flex;flex-direction:column;border:2.5px solid #1a1a1a;border-radius:20px;background:#fff;box-shadow:5px 5px 0 #1a1a1a;padding:22px;gap:8px">
               <span style="font-size:15px;font-weight:700;letter-spacing:.01em;color:#3d3732;color:var(--color-accent-700)">{{ q.kicker }}</span>
-              <span style="font-family:var(--font-heading);font-weight:800;font-size:28px;line-height:1;">{{ q.title }}</span>
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1.1;">{{ q.title }}</span>
               <p style="margin:0;font-size:16px;line-height:1.5;color:#2b2724">{{ q.desc }}</p>
               <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
                 <div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700);padding-bottom:2px"><span>Piatto</span><span style="text-align:right">Venduti</span><span style="text-align:right">Guadagno<br>a piatto</span></div>
@@ -580,6 +588,7 @@
             </div>
           </sc-for>
         </div>
+        </sc-if>
       </div>
     </sc-if>
 
@@ -4334,17 +4343,18 @@ class Component extends DCLogic {
     const d28 = Component.daysTo(Component.TODAY, 28);
     const QD = Component.quadranti(pz.map(p => ({ p, kind: Component.kindOf(p), sold: soldIn(p, d28) / 4, margin: p.margin })));
     const kindsN = new Set(pz.map(p => Component.kindOf(p))).size, KL = Object.fromEntries(Component.KINDS);
-    const q = (hiPop, hiMar, reprice) => QD.piatti.filter(x => x.hiPop === hiPop && x.hiMar === hiMar).sort((a, b) => b.margin * b.sold - a.margin * a.sold).map(({ p, sold }) => ({ name: p.name, kindL: KL[Component.kindOf(p)], hasKind: kindsN > 1, sold: Math.round(sold), marginL: p.marginL, hasExtra: !!reprice, extra: reprice ? '+1 € sul menù ≈ +' + Math.round(sold / (1 + vat)) + ' € a settimana, a parità di vendite' : '' }));
-    const quadRuleL = 'Ogni piatto si confronta con quelli del suo tipo, sulle vendite delle ultime 4 settimane. ' + Component.KINDS.filter(([k]) => QD.soglie[k]).map(([k]) => { const s = QD.soglie[k]; return Component.KIND_CAT[k] + ': venduta tanto da ' + Math.ceil(s.pop) + ' a settimana (70% della media), guadagno alto da ' + eur(s.mar) + ' a piatto.'; }).join(' ');
-    const quadSoliL = QD.soli.length ? 'Senza confronto, perché unici del loro tipo: ' + QD.soli.map(x => x.p.name).join(', ') + '.' : '';
+    const q = (hiPop, hiMar, reprice) => QD.piatti.filter(x => x.hiPop === hiPop && x.hiMar === hiMar).sort((a, b) => b.margin * b.sold - a.margin * a.sold).map(({ p, sold }) => ({ name: p.name, kindL: KL[Component.kindOf(p)], hasKind: kindsN > 1, sold: Math.round(sold), marginL: p.marginL, hasExtra: !!reprice, extra: reprice ? '+1 € sul prezzo ≈ +' + Math.round(sold / (1 + vat)) + ' € a settimana' : '' }));
+    const quadRuleL = 'Ogni piatto è confrontato solo con quelli del suo tipo (pizze con pizze, fritti con fritti…), sulle vendite delle ultime 4 settimane. High volume vuol dire che ne vendi almeno quanto scritto qui sotto; high profit che ti lascia almeno quella cifra a piatto, tolti IVA e ingredienti.';
+    const quadSoglie = Component.KINDS.filter(([k]) => QD.soglie[k]).map(([k]) => { const s = QD.soglie[k]; return { kind: Component.KIND_CAT[k], pop: Math.ceil(s.pop) + ' a settimana', mar: eur(s.mar) }; });
+    const quadSoliL = QD.soli.length ? (QD.soli.length === 1 ? QD.soli[0].p.name + ' non ha confronto: è l’unico del suo tipo.' : QD.soli.map(x => x.p.name).join(', ') + ' non hanno confronto: sono gli unici del loro tipo.') : '';
     const qd = (kicker, title, desc, items) => ({ kicker, title, desc, items, empty: !items.length });
     const quadRows = [
       { label: 'Più vendute', quads: [
-        qd('Venduta tanto · guadagno basso', 'Da riprezzare', 'Piacciono ma rendono poco: rivedi prezzo o grammature.', q(true, false, true)),
-        qd('Venduta tanto · guadagno alto', 'Punti di forza', 'Mantieni qualità e posizione in menù.', q(true, true))] },
+        qd('Da riprezzare', 'High volume · Low profit', 'Piacciono ma ti lasciano poco: rivedi prezzo o grammature.', q(true, false, true)),
+        qd('Da tenere così', 'High volume · High profit', 'I tuoi piatti migliori: mantieni qualità e posto in menù.', q(true, true))] },
       { label: 'Meno vendute', quads: [
-        qd('Venduta poco · guadagno basso', 'Da rivedere', 'Valuta se toglierle o ripensarle.', q(false, false)),
-        qd('Venduta poco · guadagno alto', 'Da spingere', 'Rendono bene: promuovile in sala.', q(false, true))] }
+        qd('Da rivedere', 'Low volume · Low profit', 'Vendono poco e rendono poco: valuta se toglierli o ripensarli.', q(false, false)),
+        qd('Da spingere', 'Low volume · High profit', 'Rendono bene ma escono poco: consigliali in sala.', q(false, true))] }
     ];
 
     // fornitori
@@ -5462,7 +5472,8 @@ class Component extends DCLogic {
       })),
       addOpts, addIng, setAddIng: e => this.setState({ addIng: e.target.value }),
       addRow: () => { if (addIng) updPizza(p => ({ recipe: [...p.recipe, { ing: addIng, qty: 50 }] })); },
-      quadRuleL, quadSoliL, quadSoliOn: !!quadSoliL,
+      quadRuleL, quadSoliL, quadSoliOn: !!quadSoliL, quadSoglie, quadOpen: !!S.quadOpen, quadToggle: () => this.setState(s => ({ quadOpen: !s.quadOpen })), quadChev: S.quadOpen ? 'rotate(180deg)' : 'none',
+      quadSumL: quadRows.flatMap(r => r.quads).filter(x => x.items.length).map(x => x.items.length + ' ' + x.kicker.toLowerCase()).join(' · '),
       supCards, ingRows, artRows, hasArts: artRows.length > 0, noArts: !artRows.length,
       ...extra
     };
